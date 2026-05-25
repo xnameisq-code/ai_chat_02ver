@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>보름보름 트친소 생성기</title>
+<title>보름 트친소표 생성기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Dodum&family=Hahmlet:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -365,18 +365,23 @@
     display: flex;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(236,72,153,.18);
+    box-shadow: 0 4px 16px var(--bp-shadow, rgba(236,72,153,.18));
     position: relative;
     border: 1.5px solid #fbcfe8;
+    /* CSS 변수 기본값 */
+    --bp-bg:     #ffffff;
+    --bp-stripe: #fbcfe8;
+    --bp-text:   #be185d;
+    --bp-shadow: rgba(236,72,153,.18);
   }
 
-  /* 보딩패스 좌측 스트라이프 */
+  /* 보딩패스 좌측 스트라이프 — CSS 변수 사용 */
   .bp-stripe {
     width: 14px;
     background: repeating-linear-gradient(
       -45deg,
-      #fbcfe8 0px, #fbcfe8 5px,
-      #fff 5px, #fff 10px
+      var(--bp-stripe) 0px, var(--bp-stripe) 5px,
+      var(--bp-bg)     5px, var(--bp-bg)     10px
     );
     flex-shrink: 0;
   }
@@ -388,14 +393,14 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    background: #fff;
+    background: var(--bp-bg, #fff);
     position: relative;
   }
   .bp-title {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .2em;
-    color: #be185d;
+    color: var(--bp-text, #be185d);
   }
   .bp-fields {
     display: grid;
@@ -446,7 +451,7 @@
   .bp-divider {
     width: 1px;
     background: repeating-linear-gradient(
-      to bottom, #fbcfe8 0px, #fbcfe8 3px, transparent 3px, transparent 6px
+      to bottom, var(--bp-stripe, #fbcfe8) 0px, var(--bp-stripe, #fbcfe8) 3px, transparent 3px, transparent 6px
     );
     flex-shrink: 0;
     margin: 0 4px;
@@ -457,7 +462,7 @@
     width: 150px;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: var(--bp-bg, #fff);
     overflow: hidden;
   }
   .bp-right-top {
@@ -480,7 +485,7 @@
     font-size: 12px;
     transition: font-size .2s;
   }
-  .bp-plane { color: #ec4899; font-size: 8px; flex-shrink: 0; }
+  .bp-plane { color: var(--bp-text, #ec4899); font-size: 8px; flex-shrink: 0; }
   .bp-account {
     font-size: 7px;
     color: #6b7280;
@@ -1006,6 +1011,18 @@
       </div>
 
       <div class="color-row">
+        <label>보딩패스 그림자</label>
+        <input type="color" id="bpShadowColor" value="#ec4899" oninput="applyBpColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ec4899" onclick="setColor('bpShadowColor','#ec4899')"></div>
+          <div class="color-preset" style="background:#3b82f6" onclick="setColor('bpShadowColor','#3b82f6')"></div>
+          <div class="color-preset" style="background:#10b981" onclick="setColor('bpShadowColor','#10b981')"></div>
+          <div class="color-preset" style="background:#f59e0b" onclick="setColor('bpShadowColor','#f59e0b')"></div>
+          <div class="color-preset" style="background:#6b7280" onclick="setColor('bpShadowColor','#6b7280')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
         <label>보딩패스 배경</label>
         <input type="color" id="bpBgColor" value="#ffffff" oninput="applyBpColors()">
         <div class="color-presets">
@@ -1447,31 +1464,32 @@ function applyFont() {
 // ── 색상 ───────────────────────────────────────
 function setColor(id, val) {
   document.getElementById(id).value = val;
-  if      (id.startsWith('chip'))                        applyChipColors();
-  else if (id === 'highlightColor')                      refreshHlStyle();
-  else if (id === 'bpBgColor' || id === 'bpStripeColor' || id === 'bpTextColor') applyBpColors();
-  else                                                   applyColors();
+  if      (id.startsWith('chip'))        applyChipColors();
+  else if (id === 'highlightColor')      refreshHlStyle();
+  else if (['bpBgColor','bpStripeColor','bpTextColor','bpShadowColor'].includes(id)) applyBpColors();
+  else                                   applyColors();
 }
 
 function applyBpColors() {
   const bg     = document.getElementById('bpBgColor').value;
   const stripe = document.getElementById('bpStripeColor').value;
   const text   = document.getElementById('bpTextColor').value;
+  const shadow = document.getElementById('bpShadowColor').value;
 
-  // 배경
-  document.querySelectorAll('.bp-body, .bp-right').forEach(el => el.style.background = bg);
-  // 스트라이프
-  document.querySelectorAll('.bp-stripe').forEach(el => {
-    el.style.background = `repeating-linear-gradient(-45deg,${stripe} 0px,${stripe} 5px,${bg} 5px,${bg} 10px)`;
-  });
-  // 점선 구분선
-  const divider = document.querySelector('.bp-divider');
-  if (divider) divider.style.background = `repeating-linear-gradient(to bottom,${stripe} 0px,${stripe} 6px,transparent 6px,transparent 12px)`;
-  // 텍스트 (BOARDING PASS 제목 + 아이콘)
-  const bpTitle = document.querySelector('.bp-title');
-  if (bpTitle) bpTitle.style.color = text;
-  const bpPlane = document.querySelector('.bp-plane');
-  if (bpPlane) bpPlane.style.color = text;
+  // hex → rgba 변환 (알파 0.5 고정)
+  const h2r = hex => {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},0.45)`;
+  };
+
+  const bp = document.getElementById('boarding-pass');
+  bp.style.setProperty('--bp-bg',     bg);
+  bp.style.setProperty('--bp-stripe', stripe);
+  bp.style.setProperty('--bp-text',   text);
+  bp.style.setProperty('--bp-shadow', h2r(shadow));
+  bp.style.boxShadow = `0 4px 16px ${h2r(shadow)}`;
 }
 function applyColors() {
   const border = document.getElementById('borderColor').value;
@@ -1515,7 +1533,7 @@ async function saveCard() {
   try {
     const canvas = await html2canvas(card, { scale:2, width:900, height:600, useCORS:true, allowTaint:true, logging:false });
     const a = document.createElement('a');
-    a.download = '보름보름둥근달이딱.png';
+    a.download = '보름보름둥근달이떴어요.png';
     a.href = canvas.toDataURL('image/png', 1.0);
     a.click();
   } catch(err) { alert('저장 오류: ' + err.message); }
