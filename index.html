@@ -1150,184 +1150,251 @@
 </div>
 
 <script>
-// ────────────────────────────────────────
-// 상태
-// ────────────────────────────────────────
-const state = {
-  headerPos: { x: 0, y: 0 },
-  leftPos:   { x: 0, y: 0 },
-  rightPos:  { x: 0, y: 0 },
-  headerScale: 100,
-  leftScale:   100,
-  rightScale:  100,
+// ── 전역 상태 ──────────────────────────────────
+const imgState = {
+  header: { x:0, y:0, scale:100 },
+  left:   { x:0, y:0, scale:100 },
+  right:  { x:0, y:0, scale:100 },
+  banner: { x:0, y:0, scale:100 },
 };
 
-// ────────────────────────────────────────
-// 체크 아이템 — 이벤트 위임으로 완전 교체
-// (onclick 속성 없이 checkbox change 이벤트만 사용)
-// ────────────────────────────────────────
-function initCheckGroups() {
-  const groups = ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup','relGroup'];
-  groups.forEach(groupId => {
-    const el = document.getElementById(groupId);
-    if (!el) return;
-    el.addEventListener('change', e => {
+// ── 미리보기 스케일 ──────────────────────────────
+function scalePreview() {
+  const card      = document.getElementById('card');
+  const container = document.getElementById('preview-container');
+  const wrap      = document.querySelector('.preview-scaler');
+  const avail     = wrap.clientWidth - 4;
+  const s         = Math.min(1, avail / 900);
+  card.style.transform       = `scale(${s})`;
+  card.style.transformOrigin = 'top left';
+  container.style.width      = Math.round(900 * s) + 'px';
+  container.style.height     = Math.round(600 * s) + 'px';
+}
+window.addEventListener('resize', scalePreview);
+window.addEventListener('load',   scalePreview);
+setTimeout(scalePreview, 100);
+
+function getCardScale() {
+  const t = document.getElementById('card').style.transform || '';
+  const m = t.match(/scale\(([^)]+)\)/);
+  return m ? parseFloat(m[1]) : 1;
+}
+
+// ── 이미지 드래그 ──────────────────────────────
+function setupDrag(zoneId, imgId, stateKey, updateFn) {
+  const zone = document.getElementById(zoneId);
+  if (!zone) return;
+  let active = false, sx, sy, ox, oy;
+
+  zone.addEventListener('mousedown', e => {
+    const img = document.getElementById(imgId);
+    if (!img || img.style.display === 'none') return;
+    e.preventDefault();
+    active = true;
+    sx = e.clientX; sy = e.clientY;
+    ox = imgState[stateKey].x; oy = imgState[stateKey].y;
+    zone.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!active) return;
+    const s = getCardScale();
+    imgState[stateKey].x = ox + (e.clientX - sx) / s;
+    imgState[stateKey].y = oy + (e.clientY - sy) / s;
+    updateFn();
+  });
+  window.addEventListener('mouseup', () => {
+    active = false;
+    zone.style.cursor = 'crosshair';
+  });
+  zone.addEventListener('touchstart', e => {
+    const img = document.getElementById(imgId);
+    if (!img || img.style.display === 'none') return;
+    e.preventDefault();
+    active = true;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+    ox = imgState[stateKey].x; oy = imgState[stateKey].y;
+  }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    if (!active) return;
+    e.preventDefault();
+    const s = getCardScale();
+    imgState[stateKey].x = ox + (e.touches[0].clientX - sx) / s;
+    imgState[stateKey].y = oy + (e.touches[0].clientY - sy) / s;
+    updateFn();
+  }, { passive: false });
+  window.addEventListener('touchend', () => { active = false; });
+}
+
+// ── 이미지 transform 적용 ──────────────────────
+function applyImgTransform(imgEl, stateKey) {
+  const { x, y, scale } = imgState[stateKey];
+  imgEl.style.transform       = `translate(${x}px, ${y}px) scale(${scale / 100})`;
+  imgEl.style.transformOrigin = 'top left';
+  imgEl.style.position        = 'absolute';
+  imgEl.style.top             = '0';
+  imgEl.style.left            = '0';
+  imgEl.style.maxWidth        = 'none';
+  imgEl.style.maxHeight       = 'none';
+}
+
+// ── 헤더 이미지 ────────────────────────────────
+function uploadHeader(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const img = document.getElementById('header-img-el');
+  img.onload = () => {
+    img.style.width  = img.naturalWidth  + 'px';
+    img.style.height = img.naturalHeight + 'px';
+    img.style.display = 'block';
+    document.getElementById('header-no-img').style.display = 'none';
+    imgState.header = { x: 0, y: 0, scale: 100 };
+    document.getElementById('headerScale').value = 100;
+    document.getElementById('headerScaleVal').textContent = '100%';
+    applyImgTransform(img, 'header');
+  };
+  img.src = URL.createObjectURL(file);
+}
+function updateHeaderTransform() {
+  const sc = parseInt(document.getElementById('headerScale').value);
+  document.getElementById('headerScaleVal').textContent = sc + '%';
+  imgState.header.scale = sc;
+  applyImgTransform(document.getElementById('header-img-el'), 'header');
+}
+setupDrag('header-zone', 'header-img-el', 'header', () => applyImgTransform(document.getElementById('header-img-el'), 'header'));
+
+// ── 사이드 이미지 ──────────────────────────────
+function uploadSide(e, side) {
+  const file = e.target.files[0]; if (!file) return;
+  const imgId  = side === 'left' ? 'left-img-el'    : 'right-img-el';
+  const phId   = side === 'left' ? 'leftPlaceholder' : 'rightPlaceholder';
+  const imgEl  = document.getElementById(imgId);
+  imgEl.onload = () => {
+    imgEl.style.width  = imgEl.naturalWidth  + 'px';
+    imgEl.style.height = imgEl.naturalHeight + 'px';
+    imgEl.style.display = 'block';
+    document.getElementById(phId).style.display = 'none';
+    imgState[side] = { x: 0, y: 0, scale: 100 };
+    const scId  = side === 'left' ? 'leftScale'    : 'rightScale';
+    const valId = side === 'left' ? 'leftScaleVal'  : 'rightScaleVal';
+    document.getElementById(scId).value = 100;
+    document.getElementById(valId).textContent = '100%';
+    applyImgTransform(imgEl, side);
+  };
+  imgEl.src = URL.createObjectURL(file);
+}
+function updateSideTransform(side) {
+  const scId  = side === 'left' ? 'leftScale'   : 'rightScale';
+  const valId = side === 'left' ? 'leftScaleVal' : 'rightScaleVal';
+  const imgId = side === 'left' ? 'left-img-el'  : 'right-img-el';
+  const sc    = parseInt(document.getElementById(scId).value);
+  document.getElementById(valId).textContent = sc + '%';
+  imgState[side].scale = sc;
+  applyImgTransform(document.getElementById(imgId), side);
+}
+setupDrag('leftImgBox',  'left-img-el',  'left',  () => applyImgTransform(document.getElementById('left-img-el'),  'left'));
+setupDrag('rightImgBox', 'right-img-el', 'right', () => applyImgTransform(document.getElementById('right-img-el'), 'right'));
+
+// ── 배너 이미지 ────────────────────────────────
+function uploadBanner(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const img = document.getElementById('bp-banner-img');
+  img.onload = () => {
+    img.style.width  = img.naturalWidth  + 'px';
+    img.style.height = img.naturalHeight + 'px';
+    img.style.display = 'block';
+    document.getElementById('bpBannerPlaceholder').style.display = 'none';
+    imgState.banner = { x: 0, y: 0, scale: 100 };
+    document.getElementById('bannerScale').value = 100;
+    document.getElementById('bannerScaleVal').textContent = '100%';
+    applyImgTransform(img, 'banner');
+  };
+  img.src = URL.createObjectURL(file);
+}
+function updateBannerTransform() {
+  const sc = parseInt(document.getElementById('bannerScale').value);
+  document.getElementById('bannerScaleVal').textContent = sc + '%';
+  imgState.banner.scale = sc;
+  applyImgTransform(document.getElementById('bp-banner-img'), 'banner');
+}
+setupDrag('bpBannerZone', 'bp-banner-img', 'banner', () => applyImgTransform(document.getElementById('bp-banner-img'), 'banner'));
+
+// ── 체크 그룹 ──────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const checkGroups = ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup','relGroup'];
+  checkGroups.forEach(groupId => {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.addEventListener('change', e => {
       if (e.target.type !== 'checkbox') return;
-      const label = e.target.closest('.check-item');
-      if (!label) return;
-      if (e.target.checked) label.classList.add('checked');
-      else label.classList.remove('checked');
-      updateDisplay(groupId);
+      const lbl = e.target.closest('label.check-item');
+      if (!lbl) return;
+      lbl.classList.toggle('checked', e.target.checked);
+      renderDisplay(groupId);
     });
   });
-}
-initCheckGroups();
+  // 초기 렌더
+  ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup'].forEach(renderDisplay);
+});
 
-function updateDisplay(groupId) {
+function renderDisplay(groupId) {
   if (groupId === 'relGroup') {
     const vals = [...document.querySelectorAll('#relGroup .check-item.checked')]
-      .map(c => c.querySelector('input').value);
+      .map(l => l.querySelector('input').value);
     document.getElementById('bpRel').textContent = vals.join(' / ') || '—';
     return;
   }
   const map = {
-    tweetGroup:    'tweetDisplay',
-    playGroup:     'playDisplay',
-    cpGroup:       'cpDisplay',
-    platformGroup: 'platformDisplay',
-    tagGroup:      'tagDisplay',
+    tweetGroup: 'tweetDisplay', playGroup: 'playDisplay',
+    cpGroup: 'cpDisplay', platformGroup: 'platformDisplay', tagGroup: 'tagDisplay'
   };
-  const displayId = map[groupId];
-  if (!displayId) return;
-  const display = document.getElementById(displayId);
-  const allItems = [...document.querySelectorAll(`#${groupId} .check-item`)];
-  display.innerHTML = '';
-  allItems.forEach(item => {
-    const v = item.querySelector('input').value;
-    const span = document.createElement('span');
-    span.textContent = v;
-    if (item.classList.contains('checked')) span.classList.add('active');
-    display.appendChild(span);
-    display.appendChild(document.createTextNode(' '));
+  const dispEl = document.getElementById(map[groupId]);
+  if (!dispEl) return;
+  dispEl.innerHTML = '';
+  document.querySelectorAll(`#${groupId} .check-item`).forEach(lbl => {
+    const sp = document.createElement('span');
+    sp.textContent = lbl.querySelector('input').value;
+    if (lbl.classList.contains('checked')) sp.classList.add('active');
+    dispEl.appendChild(sp);
+    dispEl.appendChild(document.createTextNode(' '));
   });
-  updateHlStyle();
+  refreshHlStyle();
 }
 
-function initDisplays() {
-  ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup'].forEach(g => updateDisplay(g));
-}
-initDisplays();
-
-// ────────────────────────────────────────
-// 직접 입력 태그 추가
-// ────────────────────────────────────────
 function addCustomTag(groupId, inputId) {
   const inp = document.getElementById(inputId);
-  const val = inp.value.trim();
-  if (!val) return;
-  const group = document.getElementById(groupId);
+  const val = inp.value.trim(); if (!val) return;
   const lbl = document.createElement('label');
   lbl.className = 'check-item checked';
   const cb = document.createElement('input');
-  cb.type = 'checkbox';
-  cb.value = val;
-  cb.checked = true;
+  cb.type = 'checkbox'; cb.value = val; cb.checked = true;
   lbl.appendChild(cb);
   lbl.appendChild(document.createTextNode(val));
-  group.appendChild(lbl);
+  document.getElementById(groupId).appendChild(lbl);
   inp.value = '';
-  updateDisplay(groupId);
+  renderDisplay(groupId);
 }
 
-// ────────────────────────────────────────
-// 색상 적용
-// ────────────────────────────────────────
-function setColor(id, val) {
-  document.getElementById(id).value = val;
-  if (id.startsWith('chip')) applyChipColors();
-  else if (id === 'highlightColor') applyHighlightColor();
-  else applyColors();
-}
-
-function applyColors() {
-  const border = document.getElementById('borderColor').value;
-  const midBg  = document.getElementById('midBg').value;
-  const botBg  = document.getElementById('bottomBg').value;
-  document.querySelectorAll('.bottom-box').forEach(b => {
-    b.style.background   = botBg;
-    b.style.borderColor  = border;
-  });
-  document.getElementById('boarding-box').style.background = midBg;
-  document.getElementById('boarding-pass').style.borderColor = border;
-  document.getElementById('mid-section').style.borderColor = border;
-  document.querySelectorAll('.side-img-box').forEach(b => b.style.borderColor = border);
-}
-
-function applyChipColors() {
-  const c1 = document.getElementById('chip1Color').value;
-  const c2 = document.getElementById('chip2Color').value;
-  const c3 = document.getElementById('chip3Color').value;
-  ['chip1','chip1b','chip1c'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.style.background = c1;
-  });
-  const el2 = document.getElementById('chip2'); if(el2) el2.style.background = c2;
-  const el3 = document.getElementById('chip3'); if(el3) el3.style.background = c3;
-}
-
-function applyHighlightColor() { updateHlStyle(); }
-
-const hlStyle = document.createElement('style');
-hlStyle.id = 'hl-style';
-document.head.appendChild(hlStyle);
-function updateHlStyle() {
-  const hc = document.getElementById('highlightColor').value;
-  hlStyle.textContent =
-    `.tag-display span.active { background-image: linear-gradient(transparent 50%, ${hc} 50%) !important; }`;
-}
-document.getElementById('highlightColor').addEventListener('input', updateHlStyle);
-updateHlStyle();
-
-// ────────────────────────────────────────
-// 폰트 적용
-// ────────────────────────────────────────
-function applyFont() {
-  const f = document.getElementById('fontSelect').value;
-  document.getElementById('card').style.fontFamily = f;
-}
-
-// ────────────────────────────────────────
-// 인용구 폰트 사이즈
-// ────────────────────────────────────────
-function updateQuoteSize() {
-  const sz = document.getElementById('quoteSize').value;
-  document.getElementById('quoteSizeVal').textContent = sz + 'px';
-  document.getElementById('bpQuote').style.fontSize = sz + 'px';
-}
-
-// ────────────────────────────────────────
-// 보딩 패스 텍스트 업데이트
-// ────────────────────────────────────────
+// ── 보딩패스 텍스트 ────────────────────────────
 function updateBP() {
   const nn = document.getElementById('nicknameInput').value || '닉네임';
   const ac = document.getElementById('accountInput').value  || '계정';
   const qt = document.getElementById('quoteInput').value    || '인용구 입력란';
   const mn = document.getElementById('mineInput').value     || '—';
-
   const bpNN = document.getElementById('bpNickname');
   bpNN.textContent = nn;
-  const len = nn.length;
-  if      (len <= 6)  bpNN.style.fontSize = '13px';
-  else if (len <= 10) bpNN.style.fontSize = '10px';
-  else                bpNN.style.fontSize = '8px';
-
+  bpNN.style.fontSize = nn.length <= 6 ? '13px' : nn.length <= 10 ? '10px' : '8px';
   document.getElementById('bpAccount').textContent = ac;
-  document.getElementById('bpQuote').textContent = qt;
-  document.getElementById('bpMine').textContent = mn;
+  document.getElementById('bpQuote').textContent   = qt;
+  document.getElementById('bpMine').textContent    = mn;
 }
 
-// ────────────────────────────────────────
-// 라디오 선택
-// ────────────────────────────────────────
+// ── 인용구 폰트 사이즈 ────────────────────────
+function updateQuoteSize() {
+  const sz = document.getElementById('quoteSize').value;
+  document.getElementById('quoteSizeVal').textContent = sz + 'px';
+  document.getElementById('bpQuote').style.fontSize   = sz + 'px';
+}
+
+// ── 라디오 ─────────────────────────────────────
 function selectRadio(el, groupId) {
   document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('checked'));
   el.classList.add('checked');
@@ -1336,207 +1403,67 @@ function selectRadio(el, groupId) {
   if (groupId === 'fubGroup') document.getElementById('bpFub').textContent = val;
 }
 
-// ────────────────────────────────────────
-// 미리보기 스케일
-// ────────────────────────────────────────
-function scalePreview() {
-  const card = document.getElementById('card');
-  const container = document.getElementById('preview-container');
-  const wrap = document.querySelector('.preview-scaler');
-  const avail = wrap.clientWidth - 4;
-  const scale = Math.min(1, avail / 900);
-  card.style.transform = `scale(${scale})`;
-  card.style.transformOrigin = 'top left';
-  container.style.width  = Math.round(900 * scale) + 'px';
-  container.style.height = Math.round(600 * scale) + 'px';
-}
-window.addEventListener('resize', scalePreview);
-window.addEventListener('load', scalePreview);
-setTimeout(scalePreview, 100);
-
-// ────────────────────────────────────────
-// 이미지 드래그 — 카드 내부 좌표 기준으로 정확하게
-// ────────────────────────────────────────
-function getCardScale() {
-  const t = document.getElementById('card').style.transform || 'scale(1)';
-  const m = t.match(/scale\(([^)]+)\)/);
-  return m ? parseFloat(m[1]) : 1;
+// ── 폰트 ───────────────────────────────────────
+function applyFont() {
+  document.getElementById('card').style.fontFamily = document.getElementById('fontSelect').value;
 }
 
-function setupDrag(zoneId, imgId, posObj, updateFn) {
-  const zone = document.getElementById(zoneId);
-  let dragging = false, startX, startY, origX, origY;
-
-  function onStart(cx, cy) {
-    const img = document.getElementById(imgId);
-    if (img.style.display === 'none') return;
-    dragging = true;
-    startX = cx; startY = cy;
-    origX = posObj.x; origY = posObj.y;
-    zone.style.cursor = 'grabbing';
-  }
-  function onMove(cx, cy) {
-    if (!dragging) return;
-    const s = getCardScale();
-    posObj.x = origX + (cx - startX) / s;
-    posObj.y = origY + (cy - startY) / s;
-    updateFn();
-  }
-  function onEnd() {
-    dragging = false;
-    zone.style.cursor = 'crosshair';
-  }
-
-  zone.addEventListener('mousedown',  e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
-  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
-  window.addEventListener('mouseup',   () => onEnd());
-
-  zone.addEventListener('touchstart',  e => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
-  window.addEventListener('touchmove', e => { if(dragging){ e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
-  window.addEventListener('touchend',  () => onEnd());
+// ── 색상 ───────────────────────────────────────
+function setColor(id, val) {
+  document.getElementById(id).value = val;
+  if      (id.startsWith('chip'))        applyChipColors();
+  else if (id === 'highlightColor')      refreshHlStyle();
+  else                                   applyColors();
 }
-
-// ────────────────────────────────────────
-// 헤더 이미지
-// ────────────────────────────────────────
-const state = { headerPos:{x:0,y:0}, leftPos:{x:0,y:0}, rightPos:{x:0,y:0} };
-
-function uploadHeader(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = document.getElementById('header-img-el');
-  img.onload = () => {
-    img.style.width  = img.naturalWidth  + 'px';
-    img.style.height = img.naturalHeight + 'px';
-    img.style.maxWidth = 'none';
-    img.style.maxHeight = 'none';
-    img.style.objectFit = 'unset';
-  };
-  img.src = url;
-  img.style.display = 'block';
-  document.getElementById('header-no-img').style.display = 'none';
-  state.headerPos = {x:0, y:0};
-  updateHeaderTransform();
+function applyColors() {
+  const border = document.getElementById('borderColor').value;
+  const midBg  = document.getElementById('midBg').value;
+  const botBg  = document.getElementById('bottomBg').value;
+  document.querySelectorAll('.bottom-box').forEach(b => {
+    b.style.background  = botBg;
+    b.style.borderColor = border;
+  });
+  document.getElementById('boarding-box').style.background      = midBg;
+  document.getElementById('boarding-pass').style.borderColor    = border;
+  document.getElementById('mid-section').style.borderColor      = border;
+  document.querySelectorAll('.side-img-box').forEach(b => b.style.borderColor = border);
 }
-
-function updateHeaderTransform() {
-  const scale = document.getElementById('headerScale').value;
-  document.getElementById('headerScaleVal').textContent = scale + '%';
-  const img = document.getElementById('header-img-el');
-  img.style.transform = `translate(${state.headerPos.x}px, ${state.headerPos.y}px) scale(${scale/100})`;
-  img.style.transformOrigin = 'top left';
+function applyChipColors() {
+  const c1 = document.getElementById('chip1Color').value;
+  const c2 = document.getElementById('chip2Color').value;
+  const c3 = document.getElementById('chip3Color').value;
+  ['chip1','chip1b','chip1c'].forEach(id => { const el = document.getElementById(id); if(el) el.style.background = c1; });
+  const e2 = document.getElementById('chip2'); if(e2) e2.style.background = c2;
+  const e3 = document.getElementById('chip3'); if(e3) e3.style.background = c3;
 }
-
-setupDrag('header-zone', 'header-img-el', state.headerPos, updateHeaderTransform);
-setupDrag('leftImgBox',  'left-img-el',   state.leftPos,   () => updateSideTransform('left'));
-setupDrag('rightImgBox', 'right-img-el',  state.rightPos,  () => updateSideTransform('right'));
-
-// ────────────────────────────────────────
-// 사이드 이미지
-// ────────────────────────────────────────
-function uploadSide(e, side) {
-  const file = e.target.files[0]; if (!file) return;
-  const url = URL.createObjectURL(file);
-  const imgEl = document.getElementById(side === 'left' ? 'left-img-el' : 'right-img-el');
-  const placeholder = document.getElementById(side === 'left' ? 'leftPlaceholder' : 'rightPlaceholder');
-  imgEl.onload = () => {
-    imgEl.style.width  = imgEl.naturalWidth  + 'px';
-    imgEl.style.height = imgEl.naturalHeight + 'px';
-    imgEl.style.maxWidth = 'none';
-    imgEl.style.maxHeight = 'none';
-    imgEl.style.objectFit = 'unset';
-    imgEl.style.top  = '0';
-    imgEl.style.left = '0';
-  };
-  imgEl.src = url;
-  imgEl.style.display = 'block';
-  placeholder.style.display = 'none';
-  if (side === 'left') { state.leftPos = {x:0,y:0}; updateSideTransform('left'); }
-  else                 { state.rightPos = {x:0,y:0}; updateSideTransform('right'); }
+const _hlStyle = document.createElement('style');
+document.head.appendChild(_hlStyle);
+function refreshHlStyle() {
+  const hc = document.getElementById('highlightColor').value;
+  _hlStyle.textContent = `.tag-display span.active{background-image:linear-gradient(transparent 50%,${hc} 50%)!important;}`;
 }
+document.getElementById('highlightColor').addEventListener('input', refreshHlStyle);
+refreshHlStyle();
 
-function updateSideTransform(side) {
-  const scaleId = side === 'left' ? 'leftScale' : 'rightScale';
-  const valId   = side === 'left' ? 'leftScaleVal' : 'rightScaleVal';
-  const imgId   = side === 'left' ? 'left-img-el' : 'right-img-el';
-  const pos     = side === 'left' ? state.leftPos : state.rightPos;
-  const sc      = document.getElementById(scaleId).value;
-  document.getElementById(valId).textContent = sc + '%';
-  const img = document.getElementById(imgId);
-  img.style.transform       = `translate(${pos.x}px, ${pos.y}px) scale(${sc/100})`;
-  img.style.transformOrigin = 'top left';
-}
-
-// ────────────────────────────────────────
-// 보딩패스 배너 이미지
-// ────────────────────────────────────────
-const bannerPos = {x:0, y:0};
-
-function uploadBanner(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = document.getElementById('bp-banner-img');
-  img.onload = () => {
-    img.style.width  = img.naturalWidth  + 'px';
-    img.style.height = img.naturalHeight + 'px';
-    img.style.maxWidth = 'none';
-    img.style.maxHeight = 'none';
-    img.style.objectFit = 'unset';
-    img.style.top  = '0';
-    img.style.left = '0';
-  };
-  img.src = url;
-  img.style.display = 'block';
-  document.getElementById('bpBannerPlaceholder').style.display = 'none';
-  bannerPos.x = 0; bannerPos.y = 0;
-  updateBannerTransform();
-}
-
-function updateBannerTransform() {
-  const scale = document.getElementById('bannerScale').value;
-  document.getElementById('bannerScaleVal').textContent = scale + '%';
-  const img = document.getElementById('bp-banner-img');
-  img.style.transform       = `translate(${bannerPos.x}px, ${bannerPos.y}px) scale(${scale/100})`;
-  img.style.transformOrigin = 'top left';
-}
-
-setupDrag('bpBannerZone', 'bp-banner-img', bannerPos, updateBannerTransform);
-
-// ────────────────────────────────────────
-// 저장 (900×600 → scale:2 → 1800×1200)
-// ────────────────────────────────────────
+// ── 저장 ───────────────────────────────────────
 async function saveCard() {
   const btn = document.querySelector('.save-btn');
-  btn.textContent = '⏳ 저장 중...';
-  btn.disabled = true;
-
-  const card = document.getElementById('card');
+  btn.textContent = '⏳ 저장 중...'; btn.disabled = true;
+  const card      = document.getElementById('card');
   const container = document.getElementById('preview-container');
-  const origTransform = card.style.transform;
-  card.style.transform = 'none';
-  container.style.overflow = 'visible';
-
+  const orig      = card.style.transform;
+  card.style.transform      = 'none';
+  container.style.overflow  = 'visible';
   try {
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      width: 900,
-      height: 600,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-    });
-    const link = document.createElement('a');
-    link.download = '닉네임카드.png';
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.click();
-  } catch(err) {
-    alert('저장 중 오류: ' + err.message);
-  }
-
-  card.style.transform = origTransform;
+    const canvas = await html2canvas(card, { scale:2, width:900, height:600, useCORS:true, allowTaint:true, logging:false });
+    const a = document.createElement('a');
+    a.download = '닉네임카드.png';
+    a.href = canvas.toDataURL('image/png', 1.0);
+    a.click();
+  } catch(err) { alert('저장 오류: ' + err.message); }
+  card.style.transform     = orig;
   container.style.overflow = 'hidden';
-  btn.textContent = '💾 이미지로 저장 (1800×1200)';
-  btn.disabled = false;
+  btn.textContent = '💾 이미지로 저장 (1800×1200)'; btn.disabled = false;
 }
 </script>
 </body>
