@@ -250,21 +250,24 @@
     overflow-x: auto;
   }
 
-  /* ── 카드 본체 (1800×1200) ── */
+  /* ── 카드 본체 (미리보기 900×600 / 저장시 scale:2 → 1800×1200) ── */
   #card {
-    width: 1800px;
-    height: 1200px;
+    width: 900px;
+    height: 600px;
     position: relative;
     background: #fff;
     transform-origin: top left;
     overflow: hidden;
     font-family: 'Noto Sans KR', sans-serif;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* 상단 헤더 이미지 */
   #header-zone {
     width: 100%;
-    height: 420px;
+    height: 210px;
     position: relative;
     overflow: hidden;
     background: linear-gradient(135deg, #fce7f3 0%, #dbeafe 100%);
@@ -312,19 +315,19 @@
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    height: 340px;
+    height: 170px;
     border-bottom: 2px solid #fbcfe8;
   }
 
   /* 좌측/우측 이미지 박스 */
   .side-img-box {
-    width: 380px;
-    min-width: 380px;
+    width: 190px;
+    min-width: 190px;
     position: relative;
     overflow: hidden;
     background: #fdf2f8;
     cursor: crosshair;
-    border: 3px solid #fbcfe8;
+    border: 2px solid #fbcfe8;
   }
   .side-img-obj {
     position: absolute;
@@ -338,13 +341,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 11px;
     color: #f9a8d4;
     font-weight: 500;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
-  .side-img-placeholder span { font-size: 24px; }
+  .side-img-placeholder span { font-size: 18px; }
 
   /* 보딩 패스 박스 */
   #boarding-box {
@@ -352,28 +355,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 28px 32px;
+    padding: 14px 16px;
     background: #fff9fb;
   }
   #boarding-pass {
     width: 100%;
-    max-width: 820px;
-    height: 260px;
+    max-width: 420px;
+    height: 130px;
     display: flex;
-    border-radius: 16px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 6px 28px rgba(236,72,153,.18);
+    box-shadow: 0 4px 16px rgba(236,72,153,.18);
     position: relative;
-    border: 2px solid #fbcfe8;
+    border: 1.5px solid #fbcfe8;
   }
 
   /* 보딩패스 좌측 스트라이프 */
   .bp-stripe {
-    width: 28px;
+    width: 14px;
     background: repeating-linear-gradient(
       -45deg,
-      #fbcfe8 0px, #fbcfe8 10px,
-      #fff 10px, #fff 20px
+      #fbcfe8 0px, #fbcfe8 5px,
+      #fff 5px, #fff 10px
     );
     flex-shrink: 0;
   }
@@ -381,15 +384,15 @@
   /* 보딩패스 중앙 내용 */
   .bp-body {
     flex: 1;
-    padding: 18px 20px;
+    padding: 9px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     background: #fff;
     position: relative;
   }
   .bp-title {
-    font-size: 22px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: .2em;
     color: #be185d;
@@ -397,40 +400,40 @@
   .bp-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    font-size: 11px;
+    gap: 4px;
+    font-size: 6px;
   }
   .bp-field-label {
     color: #9ca3af;
-    font-size: 10px;
-    margin-bottom: 2px;
+    font-size: 6px;
+    margin-bottom: 1px;
     font-weight: 500;
   }
   .bp-field-val {
-    font-size: 12px;
+    font-size: 7px;
     font-weight: 600;
     color: #374151;
-    min-height: 16px;
+    min-height: 8px;
   }
 
   /* 체크 항목들 */
   .bp-checks {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     flex-wrap: wrap;
   }
   .bp-check-item {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
-    font-size: 11px;
+    gap: 2px;
+    font-size: 6px;
     color: #9ca3af;
   }
   .bp-check-item.on { color: #ec4899; font-weight: 600; }
   .bp-check-dot {
-    width: 8px; height: 8px;
+    width: 4px; height: 4px;
     border-radius: 50%;
-    border: 1.5px solid #d1d5db;
+    border: 1px solid #d1d5db;
     background: transparent;
     flex-shrink: 0;
   }
@@ -441,29 +444,29 @@
 
   /* 점선 구분선 */
   .bp-divider {
-    width: 2px;
+    width: 1px;
     background: repeating-linear-gradient(
-      to bottom, #fbcfe8 0px, #fbcfe8 6px, transparent 6px, transparent 12px
+      to bottom, #fbcfe8 0px, #fbcfe8 3px, transparent 3px, transparent 6px
     );
     flex-shrink: 0;
-    margin: 0 8px;
+    margin: 0 4px;
   }
 
   /* 보딩패스 우측 (닉네임+배경이미지+인용구) */
   .bp-right {
-    width: 300px;
+    width: 150px;
     display: flex;
     flex-direction: column;
     background: #fff;
     overflow: hidden;
   }
   .bp-right-top {
-    padding: 16px 18px 10px;
+    padding: 8px 9px 5px;
   }
   .bp-nickname-area {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     flex-wrap: nowrap;
     overflow: hidden;
   }
@@ -474,12 +477,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    font-size: clamp(14px, 3.2vw, 24px);
+    font-size: 12px;
     transition: font-size .2s;
   }
-  .bp-plane { color: #ec4899; font-size: 15px; flex-shrink: 0; }
+  .bp-plane { color: #ec4899; font-size: 8px; flex-shrink: 0; }
   .bp-account {
-    font-size: 12px;
+    font-size: 7px;
     color: #6b7280;
     font-weight: 400;
     white-space: nowrap;
@@ -494,7 +497,7 @@
     overflow: hidden;
     background: linear-gradient(135deg, #fce7f3 0%, #ede9fe 50%, #dbeafe 100%);
     cursor: crosshair;
-    min-height: 60px;
+    min-height: 30px;
   }
   .bp-banner-img {
     position: absolute;
@@ -510,9 +513,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 7px;
     color: #c4b5fd;
-    gap: 4px;
+    gap: 2px;
     letter-spacing: .03em;
   }
   .bp-banner:hover .bp-banner-edit {
@@ -533,17 +536,17 @@
   .bp-banner-edit span {
     background: rgba(236,72,153,.8);
     color: #fff;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 6px;
     font-weight: 600;
   }
 
   .bp-right-bottom {
-    padding: 10px 18px 14px;
+    padding: 5px 9px 7px;
   }
   .bp-quote {
-    font-size: clamp(9px, 1.4vw, 12px);
+    font-size: 6px;
     color: #4b5563;
     line-height: 1.6;
     font-style: italic;
@@ -566,10 +569,10 @@
   }
   .bottom-box {
     border: 2px solid #fbcfe8;
-    padding: 20px 22px;
+    padding: 10px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     overflow: hidden;
   }
   .bottom-box:not(:last-child) {
@@ -712,6 +715,20 @@
         <span>크기</span>
         <input type="range" id="rightScale" min="50" max="300" value="100" oninput="updateSideTransform('right')">
         <span id="rightScaleVal">100%</span>
+      </div>
+    </div>
+
+    <!-- 보딩패스 배너 이미지 -->
+    <div class="panel-section">
+      <label>보딩패스 배경 이미지</label>
+      <button class="upload-btn" onclick="document.getElementById('bannerImgInput').click()">
+        🖼 배너 이미지 업로드
+      </button>
+      <input type="file" id="bannerImgInput" accept="image/*" style="display:none" onchange="uploadBanner(event)">
+      <div class="slider-wrap">
+        <span>크기</span>
+        <input type="range" id="bannerScale" min="50" max="300" value="100" oninput="updateBannerTransform()">
+        <span id="bannerScaleVal">100%</span>
       </div>
     </div>
 
@@ -1139,17 +1156,18 @@ const state = {
 };
 
 // ────────────────────────────────────────
-// 미리보기 스케일 (반응형)
+// 미리보기 스케일 (반응형 — 화면에 꽉 차게)
 // ────────────────────────────────────────
 function scalePreview() {
   const card = document.getElementById('card');
   const container = document.getElementById('preview-container');
   const wrap = document.querySelector('.preview-scaler');
   const avail = wrap.clientWidth - 4;
-  const scale = Math.min(1, avail / 1800);
+  // 카드 실제 크기 900×600 기준으로 스케일
+  const scale = Math.min(1, avail / 900);
   card.style.transform = `scale(${scale})`;
-  container.style.width  = (1800 * scale) + 'px';
-  container.style.height = (1200 * scale) + 'px';
+  container.style.width  = Math.round(900 * scale) + 'px';
+  container.style.height = Math.round(600 * scale) + 'px';
 }
 window.addEventListener('resize', scalePreview);
 window.addEventListener('load', scalePreview);
@@ -1328,6 +1346,32 @@ document.getElementById('highlightColor').addEventListener('input', updateHlStyl
 updateHlStyle();
 
 // ────────────────────────────────────────
+// 보딩패스 배너 이미지
+// ────────────────────────────────────────
+const bannerPos = { x: 0, y: 0 };
+
+function uploadBanner(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById('bp-banner-img');
+  img.src = url;
+  img.style.display = 'block';
+  document.getElementById('bpBannerPlaceholder').style.display = 'none';
+  bannerPos.x = 0; bannerPos.y = 0;
+  updateBannerTransform();
+}
+
+function updateBannerTransform() {
+  const scale = document.getElementById('bannerScale').value;
+  document.getElementById('bannerScaleVal').textContent = scale + '%';
+  const img = document.getElementById('bp-banner-img');
+  img.style.transform = `translate(${bannerPos.x}px, ${bannerPos.y}px) scale(${scale/100})`;
+}
+
+setupDrag('bpBannerZone', 'bp-banner-img', bannerPos, updateBannerTransform);
+
+// ────────────────────────────────────────
 // 헤더 이미지 업로드 + 드래그
 // ────────────────────────────────────────
 function uploadHeader(e) {
@@ -1431,7 +1475,7 @@ function updateSideTransform(side) {
 }
 
 // ────────────────────────────────────────
-// 이미지 저장
+// 이미지 저장 (900×600 → scale:2 → 1800×1200)
 // ────────────────────────────────────────
 async function saveCard() {
   const btn = document.querySelector('.save-btn');
@@ -1439,14 +1483,18 @@ async function saveCard() {
   btn.disabled = true;
 
   const card = document.getElementById('card');
+  const container = document.getElementById('preview-container');
+
+  // 저장 전: transform 제거, 컨테이너 실제 크기로 임시 설정
   const origTransform = card.style.transform;
-  card.style.transform = 'scale(1)';
+  card.style.transform = 'none';
+  container.style.overflow = 'visible';
 
   try {
     const canvas = await html2canvas(card, {
-      scale: 2,
-      width: 1800,
-      height: 1200,
+      scale: 2,          // 900×600 × 2 = 1800×1200
+      width: 900,
+      height: 600,
       useCORS: true,
       allowTaint: true,
       logging: false,
@@ -1459,7 +1507,9 @@ async function saveCard() {
     alert('저장 중 오류가 발생했습니다: ' + e.message);
   }
 
+  // 복구
   card.style.transform = origTransform;
+  container.style.overflow = 'hidden';
   btn.textContent = '💾 이미지로 저장 (1800×1200)';
   btn.disabled = false;
 }
