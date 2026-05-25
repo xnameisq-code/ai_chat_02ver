@@ -365,24 +365,15 @@
     display: flex;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 16px var(--bp-shadow, rgba(236,72,153,.18));
+    box-shadow: 0 4px 16px rgba(236,72,153,.18);
     position: relative;
     border: 1.5px solid #fbcfe8;
-    /* CSS 변수 기본값 */
-    --bp-bg:     #ffffff;
-    --bp-stripe: #fbcfe8;
-    --bp-text:   #be185d;
-    --bp-shadow: rgba(236,72,153,.18);
   }
 
-  /* 보딩패스 좌측 스트라이프 — CSS 변수 사용 */
+  /* 보딩패스 좌우 단색 띠 */
   .bp-stripe {
     width: 14px;
-    background: repeating-linear-gradient(
-      -45deg,
-      var(--bp-stripe) 0px, var(--bp-stripe) 5px,
-      var(--bp-bg)     5px, var(--bp-bg)     10px
-    );
+    background: #fbcfe8;
     flex-shrink: 0;
   }
 
@@ -393,14 +384,14 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    background: var(--bp-bg, #fff);
+    background: #fff;
     position: relative;
   }
   .bp-title {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .2em;
-    color: var(--bp-text, #be185d);
+    color: #be185d;
   }
   .bp-fields {
     display: grid;
@@ -451,18 +442,18 @@
   .bp-divider {
     width: 1px;
     background: repeating-linear-gradient(
-      to bottom, var(--bp-stripe, #fbcfe8) 0px, var(--bp-stripe, #fbcfe8) 3px, transparent 3px, transparent 6px
+      to bottom, #fbcfe8 0px, #fbcfe8 3px, transparent 3px, transparent 6px
     );
     flex-shrink: 0;
     margin: 0 4px;
   }
 
-  /* 보딩패스 우측 (닉네임+배경이미지+인용구) */
+  /* 보딩패스 우측 */
   .bp-right {
     width: 150px;
     display: flex;
     flex-direction: column;
-    background: var(--bp-bg, #fff);
+    background: #fff;
     overflow: hidden;
   }
   .bp-right-top {
@@ -485,7 +476,7 @@
     font-size: 12px;
     transition: font-size .2s;
   }
-  .bp-plane { color: var(--bp-text, #ec4899); font-size: 8px; flex-shrink: 0; }
+  .bp-plane { color: #ec4899; font-size: 8px; flex-shrink: 0; }
   .bp-account {
     font-size: 7px;
     color: #6b7280;
@@ -1476,7 +1467,6 @@ function applyBpColors() {
   const text   = document.getElementById('bpTextColor').value;
   const shadow = document.getElementById('bpShadowColor').value;
 
-  // hex → rgba 변환 (알파 0.5 고정)
   const h2r = hex => {
     const r = parseInt(hex.slice(1,3),16);
     const g = parseInt(hex.slice(3,5),16);
@@ -1485,10 +1475,21 @@ function applyBpColors() {
   };
 
   const bp = document.getElementById('boarding-pass');
-  bp.style.setProperty('--bp-bg',     bg);
-  bp.style.setProperty('--bp-stripe', stripe);
-  bp.style.setProperty('--bp-text',   text);
-  bp.style.setProperty('--bp-shadow', h2r(shadow));
+
+  // 단색 띠
+  document.querySelectorAll('.bp-stripe').forEach(el => el.style.background = stripe);
+  // 본문 배경
+  document.querySelectorAll('.bp-body, .bp-right').forEach(el => el.style.background = bg);
+  // 점선 구분선
+  const divider = document.querySelector('.bp-divider');
+  if (divider) divider.style.background =
+    `repeating-linear-gradient(to bottom,${stripe} 0px,${stripe} 3px,transparent 3px,transparent 6px)`;
+  // 텍스트 + 아이콘
+  const bpTitle = document.querySelector('.bp-title');
+  if (bpTitle) bpTitle.style.color = text;
+  const bpPlane = document.querySelector('.bp-plane');
+  if (bpPlane) bpPlane.style.color = text;
+  // 그림자
   bp.style.boxShadow = `0 4px 16px ${h2r(shadow)}`;
 }
 function applyColors() {
