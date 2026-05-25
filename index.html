@@ -1,526 +1,1401 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 생성기</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Jua&family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
-    <style>
-        :root {
-            --font-family: 'Noto Sans KR', sans-serif;
-            --center-color: #ffccda;
-            --bottom-color: #ffb6c1;
-            --shape-color: #a2b9d4;
-            --highlight-color: #fff0f5;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>닉네임 카드 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;700&family=Gothic+A1:wght@400;500;700&family=Sunflower:wght@300;500;700&family=Black+Han+Sans&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            display: flex;
-            height: 100vh;
-            background-color: #f5f6fa;
-            overflow: hidden;
-        }
+  /* ── 전체 레이아웃 ── */
+  .app-wrap {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    width: 100%;
+    max-width: 1920px;
+    align-items: flex-start;
+  }
 
-        /* 왼쪽 컨트롤 패널 */
-        .sidebar {
-            width: 400px;
-            background-color: #ffffff;
-            border-right: 1px solid #ddd;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
+  /* ── 좌측 컨트롤 패널 ── */
+  .panel {
+    width: 320px;
+    min-width: 300px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    position: sticky;
+    top: 16px;
+  }
+  .panel::-webkit-scrollbar { width: 5px; }
+  .panel::-webkit-scrollbar-thumb { background: #f9a8d4; border-radius: 4px; }
 
-        .sidebar h2 { font-size: 18px; margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid #ffb6c1; }
-        .control-group { margin-bottom: 20px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
-        .control-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        .control-group input[type="text"], .control-group select, .control-group textarea {
-            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 5px; font-family: inherit;
-        }
-        .control-group input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; }
-        
-        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .checkbox-grid label { display: flex; align-items: center; font-weight: normal; font-size: 13px; margin: 0; cursor: pointer; }
-        .checkbox-grid input[type="checkbox"], .checkbox-grid input[type="radio"] { margin-right: 4px; }
+  .panel h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #be185d;
+    border-bottom: 2px solid #fbcfe8;
+    padding-bottom: 6px;
+  }
 
-        details { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #eee; }
-        summary { font-weight: bold; cursor: pointer; margin-bottom: 10px; outline: none; }
+  .panel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .panel-section label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .panel-section input[type="text"],
+  .panel-section textarea {
+    width: 100%;
+    border: 1.5px solid #fbcfe8;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+    resize: vertical;
+  }
+  .panel-section input[type="text"]:focus,
+  .panel-section textarea:focus { border-color: #ec4899; }
 
-        .btn-add { background: var(--bottom-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .btn-save { background: #2f3640; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 20px; }
+  /* 색상 팔레트 */
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .color-row label { font-size: 12px; color: #6b7280; min-width: 80px; }
+  .color-row input[type="color"] {
+    width: 32px; height: 32px;
+    border: none; border-radius: 6px;
+    cursor: pointer; padding: 2px;
+    background: transparent;
+  }
+  .color-presets {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .color-preset {
+    width: 22px; height: 22px; border-radius: 50%;
+    cursor: pointer; border: 2px solid transparent;
+    transition: transform .15s, border-color .15s;
+  }
+  .color-preset:hover { transform: scale(1.2); }
 
-        /* 오른쪽 프리뷰 영역 */
-        .preview-wrapper {
-            flex: 1;
-            overflow: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #e0e0e0;
-            padding: 20px;
-        }
+  /* 폰트 선택 */
+  .font-select {
+    width: 100%;
+    border: 1.5px solid #fbcfe8;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 13px;
+    outline: none;
+  }
 
-        #zoom-container {
-            transform-origin: center center;
-            transition: transform 0.2s;
-        }
+  /* 이미지 업로드 버튼 */
+  .upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: #fdf2f8;
+    border: 1.5px dashed #f9a8d4;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #be185d;
+    cursor: pointer;
+    transition: background .2s;
+    font-family: inherit;
+  }
+  .upload-btn:hover { background: #fce7f3; }
 
-        /* 메인 캔버스 1800x1200 */
-        .canvas {
-            width: 1800px;
-            height: 1200px;
-            background-color: #ffffff;
-            position: relative;
-            box-sizing: border-box;
-            padding: 30px;
-            font-family: var(--font-family);
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+  /* 체크박스 그룹 */
+  .check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .check-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border: 1.5px solid #fbcfe8;
+    border-radius: 20px;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
+    color: #6b7280;
+  }
+  .check-item input { display: none; }
+  .check-item.checked {
+    background: linear-gradient(135deg, #ec4899, #f472b6);
+    border-color: #ec4899;
+    color: #fff;
+    font-weight: 600;
+  }
 
-        .watermark { position: absolute; top: 15px; right: 30px; font-size: 16px; color: #666; font-weight: bold; z-index: 5; text-shadow: 1px 1px 2px white; }
+  /* 라디오 버튼 그룹 */
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .radio-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border: 1.5px solid #fbcfe8;
+    border-radius: 20px;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
+    color: #6b7280;
+  }
+  .radio-item input { display: none; }
+  .radio-item.checked {
+    background: #fdf2f8;
+    border-color: #ec4899;
+    color: #be185d;
+    font-weight: 600;
+  }
 
-        /* 드래그 가능 배경 */
-        .drag-bg {
-            background-size: cover;
-            background-repeat: no-repeat;
-            cursor: grab;
-            background-color: #f0f0f0;
-            position: relative;
-        }
-        .drag-bg:active { cursor: grabbing; }
-        .drag-bg::after { content: '클릭하여 이미지 위치 조정'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #aaa; font-size: 14px; pointer-events: none; opacity: 0.8; }
-        .drag-bg.has-image::after { display: none; }
+  /* 저장 버튼 */
+  .save-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #ec4899, #f472b6);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .2s;
+  }
+  .save-btn:hover { opacity: .85; }
 
-        /* 상단 헤더 */
-        .header-section { width: 100%; height: 350px; border-radius: 10px; overflow: hidden; }
-        
-        /* 중앙 박스 영역 */
-        .middle-section { display: flex; width: 100%; height: 320px; gap: 30px; justify-content: space-between; }
-        .side-img { width: 400px; height: 100%; border-radius: 20px; overflow: hidden; }
-        
-        /* 보딩 패스 디자인 */
-        .boarding-pass-wrap {
-            flex: 1;
-            background: repeating-linear-gradient(45deg, var(--center-color), var(--center-color) 15px, #ffffff 15px, #ffffff 30px);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .boarding-pass-inner { background: #fff; width: 100%; height: 100%; border-radius: 5px; display: flex; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .barcode { width: 60px; height: 100%; background: repeating-linear-gradient(180deg, var(--center-color) 0, var(--center-color) 2px, transparent 2px, transparent 5px, var(--center-color) 5px, var(--center-color) 9px, transparent 9px, transparent 12px); border-right: 1px solid #eee; }
-        .bp-content { flex: 1; padding: 25px; display: flex; flex-direction: column; }
-        .bp-title { font-size: 32px; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .bp-body { display: flex; flex: 1; gap: 40px; }
-        .bp-info-list { width: 300px; font-size: 16px; line-height: 1.8; }
-        .bp-info-item { margin-bottom: 15px; }
-        .bp-label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 2px; }
-        .bp-val { font-weight: bold; }
-        .bp-main-names { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .names-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 20px; }
-        .name-box-container { width: 40%; height: 60px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .name-box { font-weight: bold; white-space: nowrap; }
-        .plane-icon { font-size: 40px; color: var(--bottom-color); transform: rotate(45deg); }
-        .quote-container { width: 100%; flex: 1; border-top: 1px dashed #ccc; padding-top: 15px; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-        .quote-box { font-size: 24px; font-weight: bold; white-space: nowrap; }
+  /* 직접 입력 태그 */
+  .tag-input-row {
+    display: flex;
+    gap: 5px;
+    margin-top: 4px;
+  }
+  .tag-input-row input {
+    flex: 1;
+    border: 1.5px solid #fbcfe8;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 12px;
+    outline: none;
+    font-family: inherit;
+  }
+  .tag-input-row button {
+    padding: 5px 10px;
+    background: #ec4899;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
 
-        /* 하단 박스 영역 */
-        .bottom-section {
-            width: 100%; flex: 1;
-            background-color: var(--bottom-color);
-            padding: 15px;
-            border-radius: 10px;
-            box-sizing: border-box;
-            display: flex;
-        }
-        .bottom-inner { width: 100%; height: 100%; background: #ffffff; border-radius: 5px; display: flex; padding: 25px; gap: 30px; box-sizing: border-box; }
-        .col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .col-title { 
-            background-color: var(--shape-color); color: #fff; padding: 8px 20px; border-radius: 30px; 
-            font-size: 20px; font-weight: bold; display: inline-block; width: max-content; margin-bottom: 10px; text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-        }
-        .tag-list { font-size: 18px; line-height: 1.8; word-break: keep-all; }
-        .highlight { background: linear-gradient(to top, var(--bottom-color) 40%, transparent 40%); font-weight: bold; }
-        .intro-box { border-top: 2px solid #eee; margin-top: 15px; padding-top: 15px; flex: 1; font-size: 18px; white-space: pre-wrap; line-height: 1.6; }
-    </style>
+  /* ── 우측 미리보기 영역 ── */
+  .preview-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .preview-label {
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
+    align-self: flex-start;
+    padding-left: 4px;
+  }
+  .preview-scaler {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* ── 카드 본체 (1800×1200) ── */
+  #card {
+    width: 1800px;
+    height: 1200px;
+    position: relative;
+    background: #fff;
+    transform-origin: top left;
+    overflow: hidden;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* 상단 헤더 이미지 */
+  #header-zone {
+    width: 100%;
+    height: 420px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fce7f3 0%, #dbeafe 100%);
+    cursor: crosshair;
+  }
+  #header-img {
+    position: absolute;
+    transform-origin: center center;
+    will-change: transform;
+    user-select: none;
+  }
+  #header-img.no-img {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #f9a8d4;
+    letter-spacing: .05em;
+  }
+  .header-img-obj {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transform-origin: center center;
+  }
+
+  /* 제작자 표기 */
+  .credit {
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+    z-index: 10;
+    font-weight: 300;
+    letter-spacing: .03em;
+    text-shadow: 0 1px 4px rgba(0,0,0,.4);
+  }
+
+  /* ── 중간 섹션 ── */
+  #mid-section {
+    display: flex;
+    align-items: stretch;
+    height: 320px;
+    border-bottom: 2px solid #fbcfe8;
+  }
+
+  /* 좌측/우측 이미지 박스 */
+  .side-img-box {
+    width: 240px;
+    min-width: 240px;
+    position: relative;
+    overflow: hidden;
+    background: #fdf2f8;
+    cursor: crosshair;
+    border: 3px solid #fbcfe8;
+  }
+  .side-img-obj {
+    position: absolute;
+    object-fit: cover;
+    transform-origin: center center;
+    user-select: none;
+    pointer-events: none;
+  }
+  .side-img-placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #f9a8d4;
+    font-weight: 500;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .side-img-placeholder span { font-size: 24px; }
+
+  /* 보딩 패스 박스 */
+  #boarding-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #fff9fb;
+  }
+  #boarding-pass {
+    width: 780px;
+    height: 270px;
+    display: flex;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(236,72,153,.15);
+    position: relative;
+    border: 2px solid #fbcfe8;
+  }
+
+  /* 보딩패스 좌측 스트라이프 */
+  .bp-stripe {
+    width: 28px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #fbcfe8 0px, #fbcfe8 10px,
+      #fff 10px, #fff 20px
+    );
+    flex-shrink: 0;
+  }
+
+  /* 보딩패스 중앙 내용 */
+  .bp-body {
+    flex: 1;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #fff;
+    position: relative;
+  }
+  .bp-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: #be185d;
+  }
+  .bp-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .bp-field-label {
+    color: #9ca3af;
+    font-size: 10px;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .bp-field-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    min-height: 16px;
+  }
+
+  /* 체크 항목들 */
+  .bp-checks {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .bp-check-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+  .bp-check-item.on { color: #ec4899; font-weight: 600; }
+  .bp-check-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid #d1d5db;
+    background: transparent;
+    flex-shrink: 0;
+  }
+  .bp-check-item.on .bp-check-dot {
+    background: #ec4899;
+    border-color: #ec4899;
+  }
+
+  /* 점선 구분선 */
+  .bp-divider {
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom, #fbcfe8 0px, #fbcfe8 6px, transparent 6px, transparent 12px
+    );
+    flex-shrink: 0;
+    margin: 0 8px;
+  }
+
+  /* 보딩패스 우측 (닉네임+인용구) */
+  .bp-right {
+    width: 280px;
+    padding: 18px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+  }
+  .bp-nickname-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .bp-nickname-text {
+    font-weight: 700;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    font-size: clamp(14px, 3.2vw, 26px);
+    transition: font-size .2s;
+  }
+  .bp-plane { color: #ec4899; font-size: 16px; flex-shrink: 0; }
+  .bp-account {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bp-quote {
+    font-size: clamp(10px, 1.8vw, 14px);
+    color: #4b5563;
+    line-height: 1.5;
+    font-style: italic;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+
+
+  /* ── 하단 세 박스 ── */
+  #bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    flex: 1;
+  }
+  .bottom-box {
+    border: 2px solid #fbcfe8;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .bottom-box:not(:last-child) {
+    border-right: none;
+  }
+
+  .box-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    align-self: flex-start;
+  }
+
+  .tag-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    line-height: 1.8;
+  }
+  .tag-display span {
+    font-size: 13px;
+    color: #374151;
+    position: relative;
+  }
+  .tag-display span.active {
+    background: linear-gradient(transparent 50%, #fde68a 50%);
+    font-weight: 600;
+    color: #111827;
+  }
+
+  /* ── 편집 오버레이 ── */
+  .edit-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(236,72,153,.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .side-img-box:hover .edit-overlay,
+  #header-zone:hover .edit-overlay {
+    opacity: 1;
+  }
+  .edit-overlay span {
+    background: rgba(236,72,153,.8);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* 이미지 드래그 커서 힌트 */
+  .dragging-img { cursor: grabbing !important; }
+
+  /* ── 슬라이더 (이미지 스케일) ── */
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .slider-wrap input[type="range"] {
+    flex: 1;
+    accent-color: #ec4899;
+  }
+
+  /* 미리보기 스케일 컨테이너 */
+  #preview-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.15);
+  }
+</style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>🎨 프로필 설정</h2>
-        
-        <button class="btn-save" onclick="saveImage()">이미지 저장하기</button>
+<div class="app-wrap">
+  <!-- ═══════════════════════════════════════
+       좌측 컨트롤 패널
+  ═══════════════════════════════════════ -->
+  <div class="panel">
+    <h2>✦ 카드 편집기</h2>
 
-        <div class="control-group" style="margin-top: 20px;">
-            <label>폰트 선택</label>
-            <select id="font-select" onchange="updateStyles()">
-                <option value="'Noto Sans KR'">Noto Sans KR (기본고딕)</option>
-                <option value="'Nanum Gothic'">나눔고딕</option>
-                <option value="'Jua'">주아체 (동글동글)</option>
-                <option value="'Do Hyeon'">도현체 (반듯한)</option>
-                <option value="'IBM Plex Sans KR'">IBM Plex Sans KR</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label>컬러 팔레트</label>
-            <div style="display:flex; gap:10px;">
-                <div>
-                    <label style="font-size:12px; font-weight:normal;">중앙 박스</label>
-                    <input type="color" id="color-center" value="#ffccda" onchange="updateStyles()">
-                </div>
-                <div>
-                    <label style="font-size:12px; font-weight:normal;">하단 배경</label>
-                    <input type="color" id="color-bottom" value="#ffb6c1" onchange="updateStyles()">
-                </div>
-                <div>
-                    <label style="font-size:12px; font-weight:normal;">도형 색상</label>
-                    <input type="color" id="color-shape" value="#a2b9d4" onchange="updateStyles()">
-                </div>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label>이미지 업로드 (드래그하여 위치 조절)</label>
-            <label style="font-size:12px; font-weight:normal;">상단 헤더</label>
-            <input type="file" id="upload-header" accept="image/*">
-            <label style="font-size:12px; font-weight:normal; margin-top:10px;">중앙 좌측 이미지</label>
-            <input type="file" id="upload-left" accept="image/*">
-            <label style="font-size:12px; font-weight:normal; margin-top:10px;">중앙 우측 이미지</label>
-            <input type="file" id="upload-right" accept="image/*">
-        </div>
-
-        <div class="control-group">
-            <label>보딩 패스 정보 (중앙)</label>
-            <input type="text" id="input-nickname" placeholder="닉네임" oninput="updateText('nickname-box', this.value)">
-            <input type="text" id="input-account" placeholder="계정 (@아이디)" oninput="updateText('account-box', this.value)">
-            <input type="text" id="input-quote" placeholder="인용구 입력란" oninput="updateText('quote-box', this.value)">
-            
-            <div style="margin-top:10px;">
-                <label style="font-size:12px;">연령</label>
-                <div class="checkbox-grid" id="opt-age">
-                    <label><input type="radio" name="age" value="성인" checked onchange="updateBoardingPass()"> 성인</label>
-                    <label><input type="radio" name="age" value="미성년자" onchange="updateBoardingPass()"> 미성년자</label>
-                    <label><input type="radio" name="age" value="비공개" onchange="updateBoardingPass()"> 비공개</label>
-                </div>
-            </div>
-            <div style="margin-top:10px;">
-                <label style="font-size:12px;">FUB FREE</label>
-                <div class="checkbox-grid" id="opt-fub">
-                    <label><input type="radio" name="fub" value="O" checked onchange="updateBoardingPass()"> O</label>
-                    <label><input type="radio" name="fub" value="X" onchange="updateBoardingPass()"> X</label>
-                </div>
-            </div>
-            <div style="margin-top:10px;">
-                <label style="font-size:12px;">관계정리</label>
-                <div class="checkbox-grid" id="opt-rel">
-                    <label><input type="radio" name="rel" value="블락" checked onchange="updateBoardingPass()"> 블락</label>
-                    <label><input type="radio" name="rel" value="언블" onchange="updateBoardingPass()"> 언블</label>
-                    <label><input type="radio" name="rel" value="맘관블" onchange="updateBoardingPass()"> 맘관블</label>
-                </div>
-            </div>
-            <div style="margin-top:10px;">
-                <label style="font-size:12px;">지뢰</label>
-                <input type="text" id="input-mine" placeholder="지뢰 항목 입력" oninput="document.getElementById('bp-mine-val').innerText = this.value || '없음'">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label>트윗 성향 (다중 선택)</label>
-            <div class="checkbox-grid" id="list-tweet"></div>
-        </div>
-
-        <div class="control-group">
-            <label>플레이 (다중 선택)</label>
-            <div class="checkbox-grid" id="list-play"></div>
-        </div>
-
-        <div class="control-group">
-            <label>CP (다중 선택)</label>
-            <div class="checkbox-grid" id="list-cp"></div>
-        </div>
-
-        <div class="control-group">
-            <details>
-                <summary>플랫폼 항목 (접기/펴기)</summary>
-                <div class="checkbox-grid" id="list-platform"></div>
-                <div style="margin-top: 10px; display:flex; gap:5px;">
-                    <input type="text" id="custom-platform" placeholder="직접 입력 추가">
-                    <button class="btn-add" onclick="addCustomItem('platform')">추가</button>
-                </div>
-            </details>
-        </div>
-        
-        <div class="control-group">
-            <label>자기 소개</label>
-            <textarea id="input-intro" rows="3" placeholder="간단한 자기 소개 글 적을 수 있는 항목" oninput="document.getElementById('canvas-intro').innerText = this.value"></textarea>
-        </div>
-
-        <div class="control-group">
-            <details open>
-                <summary>선호 태그 항목 (접기/펴기)</summary>
-                <div class="checkbox-grid" id="list-tags"></div>
-                <div style="margin-top: 10px; display:flex; gap:5px;">
-                    <input type="text" id="custom-tag" placeholder="직접 입력 추가">
-                    <button class="btn-add" onclick="addCustomItem('tags')">추가</button>
-                </div>
-            </details>
-        </div>
-        <br><br><br>
+    <!-- 폰트 선택 -->
+    <div class="panel-section">
+      <label>폰트</label>
+      <select class="font-select" id="fontSelect" onchange="applyFont()">
+        <option value="'Noto Sans KR', sans-serif">Noto Sans KR (고딕)</option>
+        <option value="'Noto Serif KR', serif">Noto Serif KR (명조)</option>
+        <option value="'Gothic A1', sans-serif">Gothic A1</option>
+        <option value="'Sunflower', sans-serif">Sunflower</option>
+        <option value="'Black Han Sans', sans-serif">Black Han Sans (블랙)</option>
+      </select>
     </div>
 
-    <div class="preview-wrapper">
-        <div id="zoom-container">
-            <div class="canvas" id="canvas">
-                <div class="watermark">제작자 보름(@2L00D4)</div>
-                
-                <div class="header-section drag-bg" id="bg-header"></div>
-                
-                <div class="middle-section">
-                    <div class="side-img drag-bg" id="bg-left"></div>
-                    <div class="boarding-pass-wrap">
-                        <div class="boarding-pass-inner">
-                            <div class="barcode"></div>
-                            <div class="bp-content">
-                                <div class="bp-title">BOARDING PASS</div>
-                                <div class="bp-body">
-                                    <div class="bp-info-list">
-                                        <div class="bp-info-item"><span class="bp-label">연령</span><span class="bp-val" id="bp-age-val"></span></div>
-                                        <div class="bp-info-item"><span class="bp-label">FUB FREE</span><span class="bp-val" id="bp-fub-val"></span></div>
-                                        <div class="bp-info-item"><span class="bp-label">관계정리</span><span class="bp-val" id="bp-rel-val"></span></div>
-                                        <div class="bp-info-item"><span class="bp-label">지뢰</span><span class="bp-val" id="bp-mine-val">입력 안됨</span></div>
-                                    </div>
-                                    <div class="bp-main-names">
-                                        <div class="names-row">
-                                            <div class="name-box-container"><div class="name-box" id="nickname-box">닉네임</div></div>
-                                            <div class="plane-icon">✈</div>
-                                            <div class="name-box-container"><div class="name-box" id="account-box">계정</div></div>
-                                        </div>
-                                        <div class="quote-container">
-                                            <div class="quote-box" id="quote-box">인용구 입력란</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="side-img drag-bg" id="bg-right"></div>
-                </div>
-
-                <div class="bottom-section">
-                    <div class="bottom-inner">
-                        <div class="col">
-                            <div><div class="col-title">트윗 성향</div><div class="tag-list" id="canvas-tweet"></div></div>
-                            <div><div class="col-title">플레이</div><div class="tag-list" id="canvas-play"></div></div>
-                            <div><div class="col-title">CP</div><div class="tag-list" id="canvas-cp"></div></div>
-                        </div>
-                        <div class="col">
-                            <div><div class="col-title">플랫폼</div><div class="tag-list" id="canvas-platform"></div></div>
-                            <div class="intro-box" id="canvas-intro">간단한 자기 소개 글 적을 수 있는 항목.</div>
-                        </div>
-                        <div class="col">
-                            <div><div class="col-title">선호 태그</div><div class="tag-list" id="canvas-tags"></div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- 헤더 이미지 -->
+    <div class="panel-section">
+      <label>상단 헤더 이미지</label>
+      <button class="upload-btn" onclick="document.getElementById('headerImgInput').click()">
+        📷 헤더 이미지 업로드
+      </button>
+      <input type="file" id="headerImgInput" accept="image/*" style="display:none" onchange="uploadHeader(event)">
+      <div class="slider-wrap">
+        <span>크기</span>
+        <input type="range" id="headerScale" min="50" max="300" value="100" oninput="updateHeaderTransform()">
+        <span id="headerScaleVal">100%</span>
+      </div>
     </div>
 
-    <script>
-        // 데이터 리스트
-        const dataLists = {
-            tweet: ["일상", "RT", "인용", "마음", "로그", "글", "그림", "탐라대화", "앓이", "OOC 및 프롬프트 배포", "드림"],
-            play: ["제작", "소비", "OOC", "그 외"],
-            cp: ["HL", "BL", "GL", "NCP", "ALL", "리버시블", "논리버시블", "다인", "OPEN", "CBC", "ONLY"],
-            platform: ["케이브덕", "로판", "제타", "크랙", "블룸", "잉크챗", "멜팅", "위프", "플레이툰"],
-            tags: ["다인", "시뮬", "탑/깁", "바텀/텍", "동정", "장발", "퍼리", "피어싱", "수인", "동물", "인외", "현대", "서양풍", "동양풍", "히어로", "센티넬버스", "네임버스", "오메가버스", "능글", "햇살", "빌런", "까칠", "무뚝뚝", "유명인", "도미넌트", "서브미시브", "BDSM", "군인", "동화", "코미디", "로코", "무협", "로맨스", "조폭", "근친", "짭근친", "쓰레기", "욕망", "중년", "소유욕", "집착", "순애", "NTR", "NTL", "애증", "구원", "노란장판", "연인", "부부", "동갑", "연상", "연하"]
-        };
+    <!-- 중앙 좌/우 이미지 -->
+    <div class="panel-section">
+      <label>중앙 좌측 이미지</label>
+      <button class="upload-btn" onclick="document.getElementById('leftImgInput').click()">
+        📷 좌측 이미지 업로드
+      </button>
+      <input type="file" id="leftImgInput" accept="image/*" style="display:none" onchange="uploadSide(event,'left')">
+      <div class="slider-wrap">
+        <span>크기</span>
+        <input type="range" id="leftScale" min="50" max="300" value="100" oninput="updateSideTransform('left')">
+        <span id="leftScaleVal">100%</span>
+      </div>
+    </div>
+    <div class="panel-section">
+      <label>중앙 우측 이미지</label>
+      <button class="upload-btn" onclick="document.getElementById('rightImgInput').click()">
+        📷 우측 이미지 업로드
+      </button>
+      <input type="file" id="rightImgInput" accept="image/*" style="display:none" onchange="uploadSide(event,'right')">
+      <div class="slider-wrap">
+        <span>크기</span>
+        <input type="range" id="rightScale" min="50" max="300" value="100" oninput="updateSideTransform('right')">
+        <span id="rightScaleVal">100%</span>
+      </div>
+    </div>
 
-        const customData = { platform: [], tags: [] };
+    <!-- 닉네임 / 계정 -->
+    <div class="panel-section">
+      <label>닉네임</label>
+      <input type="text" id="nicknameInput" placeholder="닉네임" oninput="updateBP()" maxlength="30">
+    </div>
+    <div class="panel-section">
+      <label>계정</label>
+      <input type="text" id="accountInput" placeholder="@계정명" oninput="updateBP()" maxlength="30">
+    </div>
+    <div class="panel-section">
+      <label>인용구</label>
+      <textarea id="quoteInput" rows="3" placeholder="인용구를 입력하세요" oninput="updateBP()"></textarea>
+    </div>
 
-        // 초기화
-        window.onload = () => {
-            initCheckboxes('tweet'); initCheckboxes('play'); initCheckboxes('cp');
-            initCheckboxes('platform'); initCheckboxes('tags');
-            updateBoardingPass();
-            scaleCanvas();
-            window.addEventListener('resize', scaleCanvas);
-            
-            setupImageUpload('upload-header', 'bg-header');
-            setupImageUpload('upload-left', 'bg-left');
-            setupImageUpload('upload-right', 'bg-right');
-        };
+    <!-- 연령 -->
+    <div class="panel-section">
+      <label>연령</label>
+      <div class="radio-group" id="ageGroup">
+        <label class="radio-item" onclick="selectRadio(this,'ageGroup')"><input type="radio" name="age" value="성인">성인</label>
+        <label class="radio-item" onclick="selectRadio(this,'ageGroup')"><input type="radio" name="age" value="미성년자">미성년자</label>
+        <label class="radio-item" onclick="selectRadio(this,'ageGroup')"><input type="radio" name="age" value="비공개">비공개</label>
+      </div>
+    </div>
 
-        // 줌(스케일) 자동 조절
-        function scaleCanvas() {
-            const wrapper = document.querySelector('.preview-wrapper');
-            const container = document.getElementById('zoom-container');
-            const scale = Math.min(wrapper.clientWidth / 1860, wrapper.clientHeight / 1260, 1);
-            container.style.transform = `scale(${scale})`;
-            container.dataset.scale = scale;
-        }
+    <!-- FUB FREE -->
+    <div class="panel-section">
+      <label>FUB Free</label>
+      <div class="radio-group" id="fubGroup">
+        <label class="radio-item" onclick="selectRadio(this,'fubGroup')"><input type="radio" name="fub" value="O">O</label>
+        <label class="radio-item" onclick="selectRadio(this,'fubGroup')"><input type="radio" name="fub" value="X">X</label>
+      </div>
+    </div>
 
-        // 체크박스 생성
-        function initCheckboxes(type) {
-            const container = document.getElementById(`list-${type}`);
-            dataLists[type].forEach(item => {
-                const label = document.createElement('label');
-                label.innerHTML = `<input type="checkbox" value="${item}" onchange="renderTags('${type}')"> ${item}`;
-                container.appendChild(label);
-            });
-            renderTags(type);
-        }
+    <!-- 관계 정리 -->
+    <div class="panel-section">
+      <label>관계 정리</label>
+      <div class="check-group" id="relGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="블락 언팔 플언팔">블락 언팔 플언팔</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="기타">기타</label>
+      </div>
+    </div>
 
-        // 직접 입력 추가
-        function addCustomItem(type) {
-            const input = document.getElementById(`custom-${type}`);
-            const val = input.value.trim();
-            if(val) {
-                customData[type].push(val);
-                input.value = '';
-                renderTags(type);
-            }
-        }
+    <!-- 지뢰 -->
+    <div class="panel-section">
+      <label>지뢰</label>
+      <input type="text" id="mineInput" placeholder="직접 입력" oninput="updateBP()">
+    </div>
 
-        // 형광펜 렌더링 로직
-        function renderTags(type) {
-            const checkedBoxes = Array.from(document.querySelectorAll(`#list-${type} input:checked`)).map(cb => cb.value);
-            const canvasContainer = document.getElementById(`canvas-${type}`);
-            canvasContainer.innerHTML = '';
-            
-            // 기본 리스트 렌더링
-            dataLists[type].forEach(item => {
-                const span = document.createElement('span');
-                span.textContent = item + ' ';
-                if(checkedBoxes.includes(item)) span.className = 'highlight';
-                canvasContainer.appendChild(span);
-            });
-            
-            // 커스텀 리스트 렌더링 (항상 하이라이트)
-            customData[type].forEach(item => {
-                const span = document.createElement('span');
-                span.textContent = item + ' ';
-                span.className = 'highlight';
-                canvasContainer.appendChild(span);
-            });
-        }
+    <!-- 트윗 성향 -->
+    <div class="panel-section">
+      <label>트윗 성향</label>
+      <div class="check-group" id="tweetGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="일상">일상</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="RT">RT</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="인용">인용</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="마음">마음</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로그">로그</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="글">글</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="그림">그림</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="탐라대화">탐라대화</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="앓이">앓이</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OOC 및 프롬프트 배포">OOC·배포</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="드림">드림</label>
+      </div>
+    </div>
 
-        // 보딩패스 옵션 업데이트 (성인/미성년자 등)
-        function updateBoardingPass() {
-            const age = document.querySelector('input[name="age"]:checked').value;
-            const fub = document.querySelector('input[name="fub"]:checked').value;
-            const rel = document.querySelector('input[name="rel"]:checked').value;
-            
-            // 하이라이트 적용 함수
-            const hl = (arr, sel) => arr.map(v => v === sel ? `<span class="highlight">${v}</span>` : v).join(' / ');
-            
-            document.getElementById('bp-age-val').innerHTML = hl(['성인', '미성년자', '비공개'], age);
-            document.getElementById('bp-fub-val').innerHTML = hl(['O', 'X'], fub);
-            document.getElementById('bp-rel-val').innerHTML = hl(['블락', '언블', '맘관블'], rel);
-        }
+    <!-- 플레이 -->
+    <div class="panel-section">
+      <label>플레이</label>
+      <div class="check-group" id="playGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="제작">제작</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="소비">소비</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OOC">OOC</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="그 외">그 외</label>
+      </div>
+    </div>
 
-        // 텍스트 및 자동 폰트 리사이징
-        function updateText(id, value) {
-            const el = document.getElementById(id);
-            el.innerText = value || (id === 'quote-box' ? '인용구 입력란' : (id === 'nickname-box' ? '닉네임' : '계정'));
-            
-            // 폰트 사이즈 자동 조절
-            let fontSize = id === 'quote-box' ? 30 : 40; 
-            el.style.fontSize = fontSize + 'px';
-            const parent = el.parentElement;
-            
-            while(el.scrollWidth > parent.clientWidth && fontSize > 12) {
-                fontSize--;
-                el.style.fontSize = fontSize + 'px';
-            }
-        }
+    <!-- CP -->
+    <div class="panel-section">
+      <label>CP</label>
+      <div class="check-group" id="cpGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="HL">HL</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="BL">BL</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="GL">GL</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NCP">NCP</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="ALL">ALL</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="리버시블">리버시블</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="논리버시블">논리버시블</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="다인">다인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OPEN">OPEN</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="CBC">CBC</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="ONLY">ONLY</label>
+      </div>
+    </div>
 
-        // 스타일 동기화 (폰트, 컬러)
-        function updateStyles() {
-            const root = document.documentElement;
-            root.style.setProperty('--font-family', document.getElementById('font-select').value);
-            root.style.setProperty('--center-color', document.getElementById('color-center').value);
-            root.style.setProperty('--bottom-color', document.getElementById('color-bottom').value);
-            root.style.setProperty('--shape-color', document.getElementById('color-shape').value);
-        }
+    <!-- 플랫폼 -->
+    <div class="panel-section">
+      <label>플랫폼</label>
+      <div class="check-group" id="platformGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="케이브덕">케이브덕</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로판">로판</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="제타">제타</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="크랙">크랙</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="블룸">블룸</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="잉크챗">잉크챗</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="멜팅">멜팅</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="위프">위프</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="플레이툰">플레이툰</label>
+      </div>
+      <div class="tag-input-row">
+        <input type="text" id="platformExtra" placeholder="직접 입력 후 추가">
+        <button onclick="addCustomTag('platformGroup','platformExtra')">+</button>
+      </div>
+    </div>
 
-        // 이미지 업로드 및 드래그 팬(Pan) 설정
-        function setupImageUpload(inputId, targetId) {
-            const input = document.getElementById(inputId);
-            const target = document.getElementById(targetId);
-            
-            input.addEventListener('change', (e) => {
-                if(e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        target.style.backgroundImage = `url(${event.target.result})`;
-                        target.classList.add('has-image');
-                        target.dataset.bgX = 50; // 퍼센트
-                        target.dataset.bgY = 50;
-                        target.style.backgroundPosition = `50% 50%`;
-                    }
-                    reader.readAsDataURL(e.target.files[0]);
-                }
-            });
+    <!-- 선호 태그 -->
+    <div class="panel-section">
+      <label>선호 태그</label>
+      <div class="check-group" id="tagGroup">
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="다인">다인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="시뮬">시뮬</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="탑/깁">탑/깁</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="바텀">바텀</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="텍 동정">텍 동정</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="장발">장발</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="퍼리">퍼리</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="피어싱">피어싱</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="수인">수인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동물">동물</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="인외">인외</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="현대">현대</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="서양풍">서양풍</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동양풍">동양풍</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="히어로">히어로</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="센티넬버스">센티넬버스</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="네임버스">네임버스</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="오메가버스">오메가버스</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="능글">능글</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="햇살">햇살</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="빌런">빌런</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="까칠">까칠</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="무뚝뚝">무뚝뚝</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="유명인">유명인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="도미넌트">도미넌트</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="서브미시브">서브미시브</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="BDSM">BDSM</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="군인">군인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동화">동화</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="코미디">코미디</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로코">로코</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="무협">무협</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로맨스">로맨스</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="조폭">조폭</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="근친">근친</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="짭근친">짭근친</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="쓰레기">쓰레기</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="욕망">욕망</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="중년">중년</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="소유욕">소유욕</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="집착">집착</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="순애">순애</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NTR">NTR</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NTL">NTL</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="애증">애증</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="구원">구원</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="노란장판">노란장판</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연인">연인</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="부부">부부</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동갑">동갑</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연상">연상</label>
+        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연하">연하</label>
+      </div>
+      <div class="tag-input-row">
+        <input type="text" id="tagExtra" placeholder="직접 입력 후 추가">
+        <button onclick="addCustomTag('tagGroup','tagExtra')">+</button>
+      </div>
+    </div>
 
-            // 마우스 드래그 이벤트 (위치 이동)
-            let isDragging = false;
-            let startX, startY, startBgX, startBgY;
+    <!-- 색상 설정 -->
+    <div class="panel-section">
+      <label>🎨 색상 설정</label>
 
-            target.addEventListener('mousedown', (e) => {
-                if(!target.classList.contains('has-image')) return;
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                startBgX = parseFloat(target.dataset.bgX) || 50;
-                startBgY = parseFloat(target.dataset.bgY) || 50;
-            });
+      <div class="color-row">
+        <label>테두리 색</label>
+        <input type="color" id="borderColor" value="#fbcfe8" oninput="applyColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#fbcfe8" onclick="setColor('borderColor','#fbcfe8')"></div>
+          <div class="color-preset" style="background:#bfdbfe" onclick="setColor('borderColor','#bfdbfe')"></div>
+          <div class="color-preset" style="background:#bbf7d0" onclick="setColor('borderColor','#bbf7d0')"></div>
+          <div class="color-preset" style="background:#fef08a" onclick="setColor('borderColor','#fef08a')"></div>
+          <div class="color-preset" style="background:#e9d5ff" onclick="setColor('borderColor','#e9d5ff')"></div>
+        </div>
+      </div>
 
-            window.addEventListener('mousemove', (e) => {
-                if(!isDragging) return;
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-                
-                // 이동 감도 조절
-                const scale = parseFloat(document.getElementById('zoom-container').dataset.scale) || 1;
-                const newX = startBgX - (dx / scale * 0.1); 
-                const newY = startBgY - (dy / scale * 0.1);
-                
-                target.dataset.bgX = Math.min(100, Math.max(0, newX));
-                target.dataset.bgY = Math.min(100, Math.max(0, newY));
-                target.style.backgroundPosition = `${target.dataset.bgX}% ${target.dataset.bgY}%`;
-            });
+      <div class="color-row">
+        <label>중앙 박스 배경</label>
+        <input type="color" id="midBg" value="#fff9fb" oninput="applyColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#fff9fb" onclick="setColor('midBg','#fff9fb')"></div>
+          <div class="color-preset" style="background:#eff6ff" onclick="setColor('midBg','#eff6ff')"></div>
+          <div class="color-preset" style="background:#f0fdf4" onclick="setColor('midBg','#f0fdf4')"></div>
+          <div class="color-preset" style="background:#fefce8" onclick="setColor('midBg','#fefce8')"></div>
+          <div class="color-preset" style="background:#faf5ff" onclick="setColor('midBg','#faf5ff')"></div>
+        </div>
+      </div>
 
-            window.addEventListener('mouseup', () => { isDragging = false; });
-        }
+      <div class="color-row">
+        <label>하단 박스 배경</label>
+        <input type="color" id="bottomBg" value="#ffffff" oninput="applyColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ffffff" onclick="setColor('bottomBg','#ffffff')"></div>
+          <div class="color-preset" style="background:#fdf2f8" onclick="setColor('bottomBg','#fdf2f8')"></div>
+          <div class="color-preset" style="background:#eff6ff" onclick="setColor('bottomBg','#eff6ff')"></div>
+          <div class="color-preset" style="background:#ecfdf5" onclick="setColor('bottomBg','#ecfdf5')"></div>
+          <div class="color-preset" style="background:#fefce8" onclick="setColor('bottomBg','#fefce8')"></div>
+        </div>
+      </div>
 
-        // 이미지 저장 (html2canvas)
-        function saveImage() {
-            const canvas = document.getElementById('canvas');
-            // 스케일 일시 초기화 후 캡처하여 고화질 유지
-            const container = document.getElementById('zoom-container');
-            const originalTransform = container.style.transform;
-            container.style.transform = 'scale(1)';
-            
-            setTimeout(() => {
-                html2canvas(canvas, { scale: 1, useCORS: true }).then(img => {
-                    const link = document.createElement('a');
-                    link.download = 'profile.png';
-                    link.href = img.toDataURL('image/png');
-                    link.click();
-                    container.style.transform = originalTransform; // 스케일 복구
-                });
-            }, 100);
-        }
-    </script>
+      <div class="color-row">
+        <label>칩1 색 (트윗성향)</label>
+        <input type="color" id="chip1Color" value="#ec4899" oninput="applyChipColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ec4899" onclick="setColor('chip1Color','#ec4899')"></div>
+          <div class="color-preset" style="background:#3b82f6" onclick="setColor('chip1Color','#3b82f6')"></div>
+          <div class="color-preset" style="background:#10b981" onclick="setColor('chip1Color','#10b981')"></div>
+          <div class="color-preset" style="background:#f59e0b" onclick="setColor('chip1Color','#f59e0b')"></div>
+          <div class="color-preset" style="background:#8b5cf6" onclick="setColor('chip1Color','#8b5cf6')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>칩2 색 (플랫폼)</label>
+        <input type="color" id="chip2Color" value="#ec4899" oninput="applyChipColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ec4899" onclick="setColor('chip2Color','#ec4899')"></div>
+          <div class="color-preset" style="background:#3b82f6" onclick="setColor('chip2Color','#3b82f6')"></div>
+          <div class="color-preset" style="background:#10b981" onclick="setColor('chip2Color','#10b981')"></div>
+          <div class="color-preset" style="background:#f59e0b" onclick="setColor('chip2Color','#f59e0b')"></div>
+          <div class="color-preset" style="background:#8b5cf6" onclick="setColor('chip2Color','#8b5cf6')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>칩3 색 (선호태그)</label>
+        <input type="color" id="chip3Color" value="#ec4899" oninput="applyChipColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ec4899" onclick="setColor('chip3Color','#ec4899')"></div>
+          <div class="color-preset" style="background:#3b82f6" onclick="setColor('chip3Color','#3b82f6')"></div>
+          <div class="color-preset" style="background:#10b981" onclick="setColor('chip3Color','#10b981')"></div>
+          <div class="color-preset" style="background:#f59e0b" onclick="setColor('chip3Color','#f59e0b')"></div>
+          <div class="color-preset" style="background:#8b5cf6" onclick="setColor('chip3Color','#8b5cf6')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>형광펜 색</label>
+        <input type="color" id="highlightColor" value="#fde68a" oninput="applyHighlightColor()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#fde68a" onclick="setColor('highlightColor','#fde68a')"></div>
+          <div class="color-preset" style="background:#a7f3d0" onclick="setColor('highlightColor','#a7f3d0')"></div>
+          <div class="color-preset" style="background:#bfdbfe" onclick="setColor('highlightColor','#bfdbfe')"></div>
+          <div class="color-preset" style="background:#fbcfe8" onclick="setColor('highlightColor','#fbcfe8')"></div>
+          <div class="color-preset" style="background:#ddd6fe" onclick="setColor('highlightColor','#ddd6fe')"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 저장 -->
+    <button class="save-btn" onclick="saveCard()">💾 이미지로 저장 (1800×1200)</button>
+
+    <div style="font-size:11px;color:#9ca3af;text-align:center;">제작자 보름(@2L00D4)</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       우측 미리보기
+  ═══════════════════════════════════════ -->
+  <div class="preview-wrap">
+    <div class="preview-label">미리보기 (실시간)</div>
+    <div class="preview-scaler">
+      <div id="preview-container">
+        <!-- 실제 카드 (1800×1200) -->
+        <div id="card">
+
+          <!-- 상단 헤더 -->
+          <div id="header-zone">
+            <div id="header-no-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#f9a8d4;font-weight:500;letter-spacing:.1em;">
+              📷 헤더 이미지를 업로드하세요
+            </div>
+            <img id="header-img-el" class="header-img-obj" style="display:none;" draggable="false" alt="">
+            <div class="edit-overlay"><span>드래그로 위치 조절</span></div>
+            <div class="credit">제작자 보름(@2L00D4)</div>
+          </div>
+
+          <!-- 중간 섹션 -->
+          <div id="mid-section">
+
+            <!-- 좌측 이미지 -->
+            <div class="side-img-box" id="leftImgBox">
+              <div class="side-img-placeholder" id="leftPlaceholder">
+                <span>📷</span>좌측 이미지
+              </div>
+              <img id="left-img-el" class="side-img-obj" style="display:none;width:100%;height:100%;" draggable="false" alt="">
+              <div class="edit-overlay"><span>드래그로 위치 조절</span></div>
+            </div>
+
+            <!-- 보딩 패스 -->
+            <div id="boarding-box">
+              <div id="boarding-pass">
+                <div class="bp-stripe"></div>
+                <div class="bp-body">
+                  <div class="bp-title">BOARDING PASS</div>
+                  <div class="bp-fields">
+                    <div>
+                      <div class="bp-field-label">연령</div>
+                      <div class="bp-field-val" id="bpAge">—</div>
+                    </div>
+                    <div>
+                      <div class="bp-field-label">FUB free</div>
+                      <div class="bp-field-val" id="bpFub">—</div>
+                    </div>
+                    <div>
+                      <div class="bp-field-label">관계 정리</div>
+                      <div class="bp-field-val" id="bpRel">—</div>
+                    </div>
+                    <div>
+                      <div class="bp-field-label">지뢰</div>
+                      <div class="bp-field-val" id="bpMine">—</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bp-divider"></div>
+                <div class="bp-right">
+                  <div>
+                    <div class="bp-nickname-area">
+                      <span class="bp-nickname-text" id="bpNickname">닉네임</span>
+                      <span class="bp-plane">✈</span>
+                      <span class="bp-account" id="bpAccount">계정</span>
+                    </div>
+                  </div>
+                  <div class="bp-quote" id="bpQuote">인용구 입력란</div>
+                </div>
+                <div class="bp-stripe"></div>
+              </div>
+            </div>
+
+            <!-- 우측 이미지 -->
+            <div class="side-img-box" id="rightImgBox">
+              <div class="side-img-placeholder" id="rightPlaceholder">
+                <span>📷</span>우측 이미지
+              </div>
+              <img id="right-img-el" class="side-img-obj" style="display:none;width:100%;height:100%;" draggable="false" alt="">
+              <div class="edit-overlay"><span>드래그로 위치 조절</span></div>
+            </div>
+
+          </div><!-- /mid-section -->
+
+          <!-- 하단 세 박스 -->
+          <div id="bottom-section">
+
+            <!-- 박스1: 트윗성향 / 플레이 / CP -->
+            <div class="bottom-box" id="box1">
+              <div class="box-chip" id="chip1" style="background:#ec4899;">트윗 성향</div>
+              <div class="tag-display" id="tweetDisplay"></div>
+              <div class="box-chip" id="chip1b" style="background:#ec4899;">플레이</div>
+              <div class="tag-display" id="playDisplay"></div>
+              <div class="box-chip" id="chip1c" style="background:#ec4899;">CP</div>
+              <div class="tag-display" id="cpDisplay"></div>
+            </div>
+
+            <!-- 박스2: 플랫폼 + 자기소개 -->
+            <div class="bottom-box" id="box2">
+              <div class="box-chip" id="chip2" style="background:#ec4899;">플랫폼</div>
+              <div class="tag-display" id="platformDisplay"></div>
+              <div style="margin-top:8px;font-size:13px;color:#6b7280;line-height:1.7;" id="introDisplay">
+                간단한 자기 소개 글 적을 수 있는 항목.
+              </div>
+              <textarea id="introInput" rows="4" placeholder="자기소개를 입력하세요"
+                style="margin-top:8px;border:1.5px solid #fbcfe8;border-radius:8px;padding:8px;font-size:13px;font-family:inherit;width:100%;resize:none;outline:none;display:none;"
+                oninput="document.getElementById('introDisplay').textContent=this.value||'간단한 자기 소개 글 적을 수 있는 항목.'"></textarea>
+            </div>
+
+            <!-- 박스3: 선호태그 -->
+            <div class="bottom-box" id="box3">
+              <div class="box-chip" id="chip3" style="background:#ec4899;">선호 태그</div>
+              <div class="tag-display" id="tagDisplay"></div>
+            </div>
+
+          </div><!-- /bottom-section -->
+
+        </div><!-- /#card -->
+      </div><!-- /#preview-container -->
+    </div><!-- /.preview-scaler -->
+    <!-- 자기소개 입력란 (미리보기 아래) -->
+    <div style="width:100%;background:#fff;border-radius:10px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-top:4px;">
+      <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:6px;">자기소개 (박스2 하단)</label>
+      <textarea id="introInputPanel" rows="3" placeholder="자기소개를 입력하세요"
+        style="width:100%;border:1.5px solid #fbcfe8;border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical;outline:none;"
+        oninput="document.getElementById('introDisplay').textContent=this.value||'간단한 자기 소개 글 적을 수 있는 항목.'"></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+// ────────────────────────────────────────
+// 상태
+// ────────────────────────────────────────
+const state = {
+  headerPos: { x: 0, y: 0 },
+  leftPos:   { x: 0, y: 0 },
+  rightPos:  { x: 0, y: 0 },
+  headerScale: 100,
+  leftScale:   100,
+  rightScale:  100,
+};
+
+// ────────────────────────────────────────
+// 미리보기 스케일 (반응형)
+// ────────────────────────────────────────
+function scalePreview() {
+  const card = document.getElementById('card');
+  const container = document.getElementById('preview-container');
+  const wrap = document.querySelector('.preview-scaler');
+  const avail = wrap.clientWidth - 4;
+  const scale = Math.min(1, avail / 1800);
+  card.style.transform = `scale(${scale})`;
+  container.style.width  = (1800 * scale) + 'px';
+  container.style.height = (1200 * scale) + 'px';
+}
+window.addEventListener('resize', scalePreview);
+window.addEventListener('load', scalePreview);
+setTimeout(scalePreview, 100);
+
+// ────────────────────────────────────────
+// 폰트 적용
+// ────────────────────────────────────────
+function applyFont() {
+  const f = document.getElementById('fontSelect').value;
+  document.getElementById('card').style.fontFamily = f;
+}
+
+// ────────────────────────────────────────
+// 보딩 패스 업데이트
+// ────────────────────────────────────────
+function updateBP() {
+  const nn = document.getElementById('nicknameInput').value || '닉네임';
+  const ac = document.getElementById('accountInput').value  || '계정';
+  const qt = document.getElementById('quoteInput').value    || '인용구 입력란';
+  const mn = document.getElementById('mineInput').value     || '—';
+
+  const bpNN = document.getElementById('bpNickname');
+  bpNN.textContent = nn;
+  // 자동 폰트 축소
+  const len = nn.length;
+  if      (len <= 8)  bpNN.style.fontSize = '26px';
+  else if (len <= 12) bpNN.style.fontSize = '20px';
+  else if (len <= 16) bpNN.style.fontSize = '15px';
+  else                bpNN.style.fontSize = '12px';
+
+  document.getElementById('bpAccount').textContent = ac;
+
+  const bpQ = document.getElementById('bpQuote');
+  bpQ.textContent = qt;
+  const qLen = qt.length;
+  if      (qLen <= 40)  bpQ.style.fontSize = '14px';
+  else if (qLen <= 80)  bpQ.style.fontSize = '12px';
+  else if (qLen <= 120) bpQ.style.fontSize = '11px';
+  else                  bpQ.style.fontSize = '10px';
+
+  document.getElementById('bpMine').textContent = mn;
+}
+
+// ────────────────────────────────────────
+// 라디오 선택 (연령, FUB)
+// ────────────────────────────────────────
+function selectRadio(el, groupId) {
+  document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('checked'));
+  el.classList.add('checked');
+  const val = el.querySelector('input').value;
+  if (groupId === 'ageGroup') document.getElementById('bpAge').textContent = val;
+  if (groupId === 'fubGroup') document.getElementById('bpFub').textContent = val;
+  updateRelDisplay();
+}
+
+function updateRelDisplay() {
+  const checked = [...document.querySelectorAll('#relGroup .check-item.checked')].map(c=>c.querySelector('input').value);
+  document.getElementById('bpRel').textContent = checked.join(' ') || '—';
+}
+
+// ────────────────────────────────────────
+// 체크 토글
+// ────────────────────────────────────────
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const groupId = el.closest('.check-group').id;
+  updateDisplay(groupId);
+}
+
+function updateDisplay(groupId) {
+  const vals = [...document.querySelectorAll(`#${groupId} .check-item.checked`)].map(c=>c.querySelector('input').value);
+
+  if (groupId === 'relGroup') {
+    document.getElementById('bpRel').textContent = vals.join(' ') || '—';
+    return;
+  }
+
+  const map = {
+    tweetGroup:    'tweetDisplay',
+    playGroup:     'playDisplay',
+    cpGroup:       'cpDisplay',
+    platformGroup: 'platformDisplay',
+    tagGroup:      'tagDisplay',
+  };
+  const displayId = map[groupId];
+  if (!displayId) return;
+
+  const display = document.getElementById(displayId);
+  const allItems = [...document.querySelectorAll(`#${groupId} .check-item`)];
+  display.innerHTML = '';
+  allItems.forEach(item => {
+    const v = item.querySelector('input').value;
+    const span = document.createElement('span');
+    span.textContent = v;
+    if (item.classList.contains('checked')) span.classList.add('active');
+    display.appendChild(span);
+    display.appendChild(document.createTextNode(' '));
+  });
+}
+
+function initDisplays() {
+  ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup'].forEach(g => updateDisplay(g));
+}
+initDisplays();
+
+// ────────────────────────────────────────
+// 직접 입력 태그 추가
+// ────────────────────────────────────────
+function addCustomTag(groupId, inputId) {
+  const inp = document.getElementById(inputId);
+  const val = inp.value.trim();
+  if (!val) return;
+  const group = document.getElementById(groupId);
+  const lbl = document.createElement('label');
+  lbl.className = 'check-item checked';
+  lbl.onclick = function(){ toggleCheck(this); };
+  lbl.innerHTML = `<input type="checkbox" value="${val}" checked>${val}`;
+  group.appendChild(lbl);
+  inp.value = '';
+  updateDisplay(groupId);
+}
+
+// ────────────────────────────────────────
+// 색상 적용
+// ────────────────────────────────────────
+function setColor(id, val) {
+  document.getElementById(id).value = val;
+  if (id.startsWith('chip')) applyChipColors();
+  else if (id === 'highlightColor') applyHighlightColor();
+  else applyColors();
+}
+
+function applyColors() {
+  const border  = document.getElementById('borderColor').value;
+  const midBg   = document.getElementById('midBg').value;
+  const botBg   = document.getElementById('bottomBg').value;
+
+  document.querySelectorAll('.bottom-box').forEach(b => b.style.background = botBg);
+  document.querySelectorAll('.bottom-box').forEach(b => b.style.borderColor = border);
+  document.getElementById('boarding-box').style.background = midBg;
+  document.getElementById('boarding-pass').style.borderColor = border;
+  document.querySelector('#mid-section').style.borderColor = border;
+  document.querySelectorAll('.side-img-box').forEach(b => b.style.borderColor = border);
+  document.querySelector('.bp-stripe').style.background = `repeating-linear-gradient(-45deg,${border} 0px,${border} 10px,#fff 10px,#fff 20px)`;
+}
+
+function applyChipColors() {
+  const c1 = document.getElementById('chip1Color').value;
+  const c2 = document.getElementById('chip2Color').value;
+  const c3 = document.getElementById('chip3Color').value;
+  ['chip1','chip1b','chip1c'].forEach(id => { const el = document.getElementById(id); if(el) el.style.background = c1; });
+  const el2 = document.getElementById('chip2'); if(el2) el2.style.background = c2;
+  const el3 = document.getElementById('chip3'); if(el3) el3.style.background = c3;
+}
+
+function applyHighlightColor() {
+  const hc = document.getElementById('highlightColor').value;
+  document.querySelectorAll('.tag-display .active').forEach(s => {
+    s.style.backgroundImage = `linear-gradient(transparent 50%, ${hc} 50%)`;
+  });
+  // 새로 렌더될 때도 적용되도록 CSS 변수로 처리
+  document.documentElement.style.setProperty('--hl-color', hc);
+}
+
+// CSS에 --hl-color 반영
+const hlStyle = document.createElement('style');
+hlStyle.id = 'hl-style';
+document.head.appendChild(hlStyle);
+function updateHlStyle() {
+  const hc = document.getElementById('highlightColor').value;
+  document.getElementById('hl-style').textContent =
+    `.tag-display span.active { background-image: linear-gradient(transparent 50%, ${hc} 50%) !important; }`;
+}
+document.getElementById('highlightColor').addEventListener('input', updateHlStyle);
+updateHlStyle();
+
+// ────────────────────────────────────────
+// 헤더 이미지 업로드 + 드래그
+// ────────────────────────────────────────
+function uploadHeader(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById('header-img-el');
+  img.src = url;
+  img.style.display = 'block';
+  document.getElementById('header-no-img').style.display = 'none';
+  state.headerPos = { x: 0, y: 0 };
+  updateHeaderTransform();
+}
+
+function updateHeaderTransform() {
+  const scale = document.getElementById('headerScale').value;
+  document.getElementById('headerScaleVal').textContent = scale + '%';
+  state.headerScale = parseInt(scale);
+  const img = document.getElementById('header-img-el');
+  img.style.transform = `translate(${state.headerPos.x}px, ${state.headerPos.y}px) scale(${state.headerScale/100})`;
+}
+
+setupDrag('header-zone', 'header-img-el', state.headerPos, updateHeaderTransform);
+setupDrag('leftImgBox',  'left-img-el',   state.leftPos,   () => updateSideTransform('left'));
+setupDrag('rightImgBox', 'right-img-el',  state.rightPos,  () => updateSideTransform('right'));
+
+function setupDrag(zoneId, imgId, posObj, updateFn) {
+  const zone = document.getElementById(zoneId);
+  let dragging = false, startX, startY, origX, origY;
+
+  zone.addEventListener('mousedown', e => {
+    const img = document.getElementById(imgId);
+    if (img.style.display === 'none') return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    origX = posObj.x;   origY = posObj.y;
+    zone.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const card = document.getElementById('card');
+    const scale = parseFloat(card.style.transform.replace('scale(','')) || 1;
+    posObj.x = origX + (e.clientX - startX) / scale;
+    posObj.y = origY + (e.clientY - startY) / scale;
+    updateFn();
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    zone.style.cursor = 'crosshair';
+  });
+
+  // 터치
+  zone.addEventListener('touchstart', e => {
+    const img = document.getElementById(imgId);
+    if (img.style.display === 'none') return;
+    dragging = true;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    origX = posObj.x;   origY = posObj.y;
+    e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const card = document.getElementById('card');
+    const scale = parseFloat(card.style.transform.replace('scale(','')) || 1;
+    posObj.x = origX + (e.touches[0].clientX - startX) / scale;
+    posObj.y = origY + (e.touches[0].clientY - startY) / scale;
+    updateFn();
+  }, { passive: false });
+  window.addEventListener('touchend', () => { dragging = false; });
+}
+
+// ────────────────────────────────────────
+// 사이드 이미지 업로드 + 드래그
+// ────────────────────────────────────────
+function uploadSide(e, side) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const imgEl = document.getElementById(side === 'left' ? 'left-img-el' : 'right-img-el');
+  const placeholder = document.getElementById(side === 'left' ? 'leftPlaceholder' : 'rightPlaceholder');
+  imgEl.src = url;
+  imgEl.style.display = 'block';
+  placeholder.style.display = 'none';
+  if (side === 'left') { state.leftPos = {x:0,y:0}; updateSideTransform('left'); }
+  else                 { state.rightPos = {x:0,y:0}; updateSideTransform('right'); }
+}
+
+function updateSideTransform(side) {
+  const scaleId = side === 'left' ? 'leftScale' : 'rightScale';
+  const valId   = side === 'left' ? 'leftScaleVal' : 'rightScaleVal';
+  const imgId   = side === 'left' ? 'left-img-el' : 'right-img-el';
+  const pos     = side === 'left' ? state.leftPos : state.rightPos;
+  const scale   = document.getElementById(scaleId).value;
+  document.getElementById(valId).textContent = scale + '%';
+  const img = document.getElementById(imgId);
+  img.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${scale/100})`;
+  img.style.transformOrigin = 'center center';
+  img.style.top = '0'; img.style.left = '0';
+  img.style.width = '100%'; img.style.height = '100%';
+}
+
+// ────────────────────────────────────────
+// 이미지 저장
+// ────────────────────────────────────────
+async function saveCard() {
+  const btn = document.querySelector('.save-btn');
+  btn.textContent = '⏳ 저장 중...';
+  btn.disabled = true;
+
+  const card = document.getElementById('card');
+  const origTransform = card.style.transform;
+  card.style.transform = 'scale(1)';
+
+  try {
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      width: 1800,
+      height: 1200,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = '닉네임카드.png';
+    link.href = canvas.toDataURL('image/png', 1.0);
+    link.click();
+  } catch(e) {
+    alert('저장 중 오류가 발생했습니다: ' + e.message);
+  }
+
+  card.style.transform = origTransform;
+  btn.textContent = '💾 이미지로 저장 (1800×1200)';
+  btn.disabled = false;
+}
+</script>
 </body>
 </html>
