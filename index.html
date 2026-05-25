@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>보름보름 트친소표 생성기</title>
+<title>닉네임 카드 생성기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Dodum&family=Hahmlet:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -701,7 +701,7 @@
       <input type="file" id="leftImgInput" accept="image/*" style="display:none" onchange="uploadSide(event,'left')">
       <div class="slider-wrap">
         <span>크기</span>
-        <input type="range" id="leftScale" min="50" max="300" value="100" oninput="updateSideTransform('left')">
+        <input type="range" id="leftScale" min="10" max="300" value="100" oninput="updateSideTransform('left')">
         <span id="leftScaleVal">100%</span>
       </div>
     </div>
@@ -713,7 +713,7 @@
       <input type="file" id="rightImgInput" accept="image/*" style="display:none" onchange="uploadSide(event,'right')">
       <div class="slider-wrap">
         <span>크기</span>
-        <input type="range" id="rightScale" min="50" max="300" value="100" oninput="updateSideTransform('right')">
+        <input type="range" id="rightScale" min="10" max="300" value="100" oninput="updateSideTransform('right')">
         <span id="rightScaleVal">100%</span>
       </div>
     </div>
@@ -727,7 +727,7 @@
       <input type="file" id="bannerImgInput" accept="image/*" style="display:none" onchange="uploadBanner(event)">
       <div class="slider-wrap">
         <span>크기</span>
-        <input type="range" id="bannerScale" min="50" max="300" value="100" oninput="updateBannerTransform()">
+        <input type="range" id="bannerScale" min="10" max="300" value="100" oninput="updateBannerTransform()">
         <span id="bannerScaleVal">100%</span>
       </div>
     </div>
@@ -776,7 +776,7 @@
       <div class="check-group" id="relGroup">
         <label class="check-item"><input type="checkbox" value="블락">블락</label>
         <label class="check-item"><input type="checkbox" value="언팔">언팔</label>
-        <label class="check-item"><input type="checkbox" value="플언팔">플언팔</label>
+        <label class="check-item"><input type="checkbox" value="블언블">블언블</label>
         <label class="check-item"><input type="checkbox" value="기타">기타</label>
       </div>
     </div>
@@ -1002,6 +1002,42 @@
           <div class="color-preset" style="background:#bfdbfe" onclick="setColor('highlightColor','#bfdbfe')"></div>
           <div class="color-preset" style="background:#fbcfe8" onclick="setColor('highlightColor','#fbcfe8')"></div>
           <div class="color-preset" style="background:#ddd6fe" onclick="setColor('highlightColor','#ddd6fe')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>보딩패스 배경</label>
+        <input type="color" id="bpBgColor" value="#ffffff" oninput="applyBpColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#ffffff" onclick="setColor('bpBgColor','#ffffff')"></div>
+          <div class="color-preset" style="background:#fff0f6" onclick="setColor('bpBgColor','#fff0f6')"></div>
+          <div class="color-preset" style="background:#eff6ff" onclick="setColor('bpBgColor','#eff6ff')"></div>
+          <div class="color-preset" style="background:#f0fdf4" onclick="setColor('bpBgColor','#f0fdf4')"></div>
+          <div class="color-preset" style="background:#fefce8" onclick="setColor('bpBgColor','#fefce8')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>보딩패스 스트라이프</label>
+        <input type="color" id="bpStripeColor" value="#fbcfe8" oninput="applyBpColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#fbcfe8" onclick="setColor('bpStripeColor','#fbcfe8')"></div>
+          <div class="color-preset" style="background:#bfdbfe" onclick="setColor('bpStripeColor','#bfdbfe')"></div>
+          <div class="color-preset" style="background:#bbf7d0" onclick="setColor('bpStripeColor','#bbf7d0')"></div>
+          <div class="color-preset" style="background:#fde68a" onclick="setColor('bpStripeColor','#fde68a')"></div>
+          <div class="color-preset" style="background:#ddd6fe" onclick="setColor('bpStripeColor','#ddd6fe')"></div>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <label>보딩패스 텍스트</label>
+        <input type="color" id="bpTextColor" value="#be185d" oninput="applyBpColors()">
+        <div class="color-presets">
+          <div class="color-preset" style="background:#be185d" onclick="setColor('bpTextColor','#be185d')"></div>
+          <div class="color-preset" style="background:#1d4ed8" onclick="setColor('bpTextColor','#1d4ed8')"></div>
+          <div class="color-preset" style="background:#065f46" onclick="setColor('bpTextColor','#065f46')"></div>
+          <div class="color-preset" style="background:#92400e" onclick="setColor('bpTextColor','#92400e')"></div>
+          <div class="color-preset" style="background:#4c1d95" onclick="setColor('bpTextColor','#4c1d95')"></div>
         </div>
       </div>
     </div>
@@ -1411,9 +1447,31 @@ function applyFont() {
 // ── 색상 ───────────────────────────────────────
 function setColor(id, val) {
   document.getElementById(id).value = val;
-  if      (id.startsWith('chip'))        applyChipColors();
-  else if (id === 'highlightColor')      refreshHlStyle();
-  else                                   applyColors();
+  if      (id.startsWith('chip'))                        applyChipColors();
+  else if (id === 'highlightColor')                      refreshHlStyle();
+  else if (id === 'bpBgColor' || id === 'bpStripeColor' || id === 'bpTextColor') applyBpColors();
+  else                                                   applyColors();
+}
+
+function applyBpColors() {
+  const bg     = document.getElementById('bpBgColor').value;
+  const stripe = document.getElementById('bpStripeColor').value;
+  const text   = document.getElementById('bpTextColor').value;
+
+  // 배경
+  document.querySelectorAll('.bp-body, .bp-right').forEach(el => el.style.background = bg);
+  // 스트라이프
+  document.querySelectorAll('.bp-stripe').forEach(el => {
+    el.style.background = `repeating-linear-gradient(-45deg,${stripe} 0px,${stripe} 5px,${bg} 5px,${bg} 10px)`;
+  });
+  // 점선 구분선
+  const divider = document.querySelector('.bp-divider');
+  if (divider) divider.style.background = `repeating-linear-gradient(to bottom,${stripe} 0px,${stripe} 6px,transparent 6px,transparent 12px)`;
+  // 텍스트 (BOARDING PASS 제목 + 아이콘)
+  const bpTitle = document.querySelector('.bp-title');
+  if (bpTitle) bpTitle.style.color = text;
+  const bpPlane = document.querySelector('.bp-plane');
+  if (bpPlane) bpPlane.style.color = text;
 }
 function applyColors() {
   const border = document.getElementById('borderColor').value;
@@ -1457,7 +1515,7 @@ async function saveCard() {
   try {
     const canvas = await html2canvas(card, { scale:2, width:900, height:600, useCORS:true, allowTaint:true, logging:false });
     const a = document.createElement('a');
-    a.download = '보름보름트친소표.png';
+    a.download = '닉네임카드.png';
     a.href = canvas.toDataURL('image/png', 1.0);
     a.click();
   } catch(err) { alert('저장 오류: ' + err.message); }
