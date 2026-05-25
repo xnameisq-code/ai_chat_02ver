@@ -744,6 +744,11 @@
     <div class="panel-section">
       <label>인용구</label>
       <textarea id="quoteInput" rows="3" placeholder="인용구를 입력하세요" oninput="updateBP()"></textarea>
+      <div class="slider-wrap">
+        <span>글자 크기</span>
+        <input type="range" id="quoteSize" min="4" max="16" value="6" oninput="updateQuoteSize()">
+        <span id="quoteSizeVal">6px</span>
+      </div>
     </div>
 
     <!-- 연령 -->
@@ -769,8 +774,10 @@
     <div class="panel-section">
       <label>관계 정리</label>
       <div class="check-group" id="relGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="블락 언팔 플언팔">블락 언팔 플언팔</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="기타">기타</label>
+        <label class="check-item"><input type="checkbox" value="블락">블락</label>
+        <label class="check-item"><input type="checkbox" value="언팔">언팔</label>
+        <label class="check-item"><input type="checkbox" value="플언팔">플언팔</label>
+        <label class="check-item"><input type="checkbox" value="기타">기타</label>
       </div>
     </div>
 
@@ -784,17 +791,17 @@
     <div class="panel-section">
       <label>트윗 성향</label>
       <div class="check-group" id="tweetGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="일상">일상</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="RT">RT</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="인용">인용</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="마음">마음</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로그">로그</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="글">글</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="그림">그림</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="탐라대화">탐라대화</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="앓이">앓이</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OOC 및 프롬프트 배포">OOC·배포</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="드림">드림</label>
+        <label class="check-item"><input type="checkbox" value="일상">일상</label>
+        <label class="check-item"><input type="checkbox" value="RT">RT</label>
+        <label class="check-item"><input type="checkbox" value="인용">인용</label>
+        <label class="check-item"><input type="checkbox" value="마음">마음</label>
+        <label class="check-item"><input type="checkbox" value="로그">로그</label>
+        <label class="check-item"><input type="checkbox" value="글">글</label>
+        <label class="check-item"><input type="checkbox" value="그림">그림</label>
+        <label class="check-item"><input type="checkbox" value="탐라대화">탐라대화</label>
+        <label class="check-item"><input type="checkbox" value="앓이">앓이</label>
+        <label class="check-item"><input type="checkbox" value="OOC 및 프롬프트 배포">OOC·배포</label>
+        <label class="check-item"><input type="checkbox" value="드림">드림</label>
       </div>
     </div>
 
@@ -802,10 +809,10 @@
     <div class="panel-section">
       <label>플레이</label>
       <div class="check-group" id="playGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="제작">제작</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="소비">소비</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OOC">OOC</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="그 외">그 외</label>
+        <label class="check-item"><input type="checkbox" value="제작">제작</label>
+        <label class="check-item"><input type="checkbox" value="소비">소비</label>
+        <label class="check-item"><input type="checkbox" value="OOC">OOC</label>
+        <label class="check-item"><input type="checkbox" value="그 외">그 외</label>
       </div>
     </div>
 
@@ -813,17 +820,17 @@
     <div class="panel-section">
       <label>CP</label>
       <div class="check-group" id="cpGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="HL">HL</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="BL">BL</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="GL">GL</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NCP">NCP</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="ALL">ALL</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="리버시블">리버시블</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="논리버시블">논리버시블</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="다인">다인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="OPEN">OPEN</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="CBC">CBC</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="ONLY">ONLY</label>
+        <label class="check-item"><input type="checkbox" value="HL">HL</label>
+        <label class="check-item"><input type="checkbox" value="BL">BL</label>
+        <label class="check-item"><input type="checkbox" value="GL">GL</label>
+        <label class="check-item"><input type="checkbox" value="NCP">NCP</label>
+        <label class="check-item"><input type="checkbox" value="ALL">ALL</label>
+        <label class="check-item"><input type="checkbox" value="리버시블">리버시블</label>
+        <label class="check-item"><input type="checkbox" value="논리버시블">논리버시블</label>
+        <label class="check-item"><input type="checkbox" value="다인">다인</label>
+        <label class="check-item"><input type="checkbox" value="OPEN">OPEN</label>
+        <label class="check-item"><input type="checkbox" value="CBC">CBC</label>
+        <label class="check-item"><input type="checkbox" value="ONLY">ONLY</label>
       </div>
     </div>
 
@@ -831,15 +838,15 @@
     <div class="panel-section">
       <label>플랫폼</label>
       <div class="check-group" id="platformGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="케이브덕">케이브덕</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로판">로판</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="제타">제타</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="크랙">크랙</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="블룸">블룸</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="잉크챗">잉크챗</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="멜팅">멜팅</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="위프">위프</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="플레이툰">플레이툰</label>
+        <label class="check-item"><input type="checkbox" value="케이브덕">케이브덕</label>
+        <label class="check-item"><input type="checkbox" value="로판">로판</label>
+        <label class="check-item"><input type="checkbox" value="제타">제타</label>
+        <label class="check-item"><input type="checkbox" value="크랙">크랙</label>
+        <label class="check-item"><input type="checkbox" value="블룸">블룸</label>
+        <label class="check-item"><input type="checkbox" value="잉크챗">잉크챗</label>
+        <label class="check-item"><input type="checkbox" value="멜팅">멜팅</label>
+        <label class="check-item"><input type="checkbox" value="위프">위프</label>
+        <label class="check-item"><input type="checkbox" value="플레이툰">플레이툰</label>
       </div>
       <div class="tag-input-row">
         <input type="text" id="platformExtra" placeholder="직접 입력 후 추가">
@@ -851,58 +858,58 @@
     <div class="panel-section">
       <label>선호 태그</label>
       <div class="check-group" id="tagGroup">
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="다인">다인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="시뮬">시뮬</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="탑/깁">탑/깁</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="바텀">바텀</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="텍 동정">텍 동정</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="장발">장발</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="퍼리">퍼리</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="피어싱">피어싱</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="수인">수인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동물">동물</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="인외">인외</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="현대">현대</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="서양풍">서양풍</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동양풍">동양풍</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="히어로">히어로</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="센티넬버스">센티넬버스</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="네임버스">네임버스</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="오메가버스">오메가버스</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="능글">능글</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="햇살">햇살</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="빌런">빌런</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="까칠">까칠</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="무뚝뚝">무뚝뚝</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="유명인">유명인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="도미넌트">도미넌트</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="서브미시브">서브미시브</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="BDSM">BDSM</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="군인">군인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동화">동화</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="코미디">코미디</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로코">로코</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="무협">무협</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="로맨스">로맨스</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="조폭">조폭</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="근친">근친</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="짭근친">짭근친</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="쓰레기">쓰레기</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="욕망">욕망</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="중년">중년</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="소유욕">소유욕</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="집착">집착</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="순애">순애</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NTR">NTR</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="NTL">NTL</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="애증">애증</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="구원">구원</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="노란장판">노란장판</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연인">연인</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="부부">부부</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="동갑">동갑</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연상">연상</label>
-        <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="연하">연하</label>
+        <label class="check-item"><input type="checkbox" value="다인">다인</label>
+        <label class="check-item"><input type="checkbox" value="시뮬">시뮬</label>
+        <label class="check-item"><input type="checkbox" value="탑/깁">탑/깁</label>
+        <label class="check-item"><input type="checkbox" value="바텀">바텀</label>
+        <label class="check-item"><input type="checkbox" value="텍 동정">텍 동정</label>
+        <label class="check-item"><input type="checkbox" value="장발">장발</label>
+        <label class="check-item"><input type="checkbox" value="퍼리">퍼리</label>
+        <label class="check-item"><input type="checkbox" value="피어싱">피어싱</label>
+        <label class="check-item"><input type="checkbox" value="수인">수인</label>
+        <label class="check-item"><input type="checkbox" value="동물">동물</label>
+        <label class="check-item"><input type="checkbox" value="인외">인외</label>
+        <label class="check-item"><input type="checkbox" value="현대">현대</label>
+        <label class="check-item"><input type="checkbox" value="서양풍">서양풍</label>
+        <label class="check-item"><input type="checkbox" value="동양풍">동양풍</label>
+        <label class="check-item"><input type="checkbox" value="히어로">히어로</label>
+        <label class="check-item"><input type="checkbox" value="센티넬버스">센티넬버스</label>
+        <label class="check-item"><input type="checkbox" value="네임버스">네임버스</label>
+        <label class="check-item"><input type="checkbox" value="오메가버스">오메가버스</label>
+        <label class="check-item"><input type="checkbox" value="능글">능글</label>
+        <label class="check-item"><input type="checkbox" value="햇살">햇살</label>
+        <label class="check-item"><input type="checkbox" value="빌런">빌런</label>
+        <label class="check-item"><input type="checkbox" value="까칠">까칠</label>
+        <label class="check-item"><input type="checkbox" value="무뚝뚝">무뚝뚝</label>
+        <label class="check-item"><input type="checkbox" value="유명인">유명인</label>
+        <label class="check-item"><input type="checkbox" value="도미넌트">도미넌트</label>
+        <label class="check-item"><input type="checkbox" value="서브미시브">서브미시브</label>
+        <label class="check-item"><input type="checkbox" value="BDSM">BDSM</label>
+        <label class="check-item"><input type="checkbox" value="군인">군인</label>
+        <label class="check-item"><input type="checkbox" value="동화">동화</label>
+        <label class="check-item"><input type="checkbox" value="코미디">코미디</label>
+        <label class="check-item"><input type="checkbox" value="로코">로코</label>
+        <label class="check-item"><input type="checkbox" value="무협">무협</label>
+        <label class="check-item"><input type="checkbox" value="로맨스">로맨스</label>
+        <label class="check-item"><input type="checkbox" value="조폭">조폭</label>
+        <label class="check-item"><input type="checkbox" value="근친">근친</label>
+        <label class="check-item"><input type="checkbox" value="짭근친">짭근친</label>
+        <label class="check-item"><input type="checkbox" value="쓰레기">쓰레기</label>
+        <label class="check-item"><input type="checkbox" value="욕망">욕망</label>
+        <label class="check-item"><input type="checkbox" value="중년">중년</label>
+        <label class="check-item"><input type="checkbox" value="소유욕">소유욕</label>
+        <label class="check-item"><input type="checkbox" value="집착">집착</label>
+        <label class="check-item"><input type="checkbox" value="순애">순애</label>
+        <label class="check-item"><input type="checkbox" value="NTR">NTR</label>
+        <label class="check-item"><input type="checkbox" value="NTL">NTL</label>
+        <label class="check-item"><input type="checkbox" value="애증">애증</label>
+        <label class="check-item"><input type="checkbox" value="구원">구원</label>
+        <label class="check-item"><input type="checkbox" value="노란장판">노란장판</label>
+        <label class="check-item"><input type="checkbox" value="연인">연인</label>
+        <label class="check-item"><input type="checkbox" value="부부">부부</label>
+        <label class="check-item"><input type="checkbox" value="동갑">동갑</label>
+        <label class="check-item"><input type="checkbox" value="연상">연상</label>
+        <label class="check-item"><input type="checkbox" value="연하">연하</label>
       </div>
       <div class="tag-input-row">
         <input type="text" id="tagExtra" placeholder="직접 입력 후 추가">
@@ -1156,96 +1163,33 @@ const state = {
 };
 
 // ────────────────────────────────────────
-// 미리보기 스케일 (반응형 — 화면에 꽉 차게)
+// 체크 아이템 — 이벤트 위임으로 완전 교체
+// (onclick 속성 없이 checkbox change 이벤트만 사용)
 // ────────────────────────────────────────
-function scalePreview() {
-  const card = document.getElementById('card');
-  const container = document.getElementById('preview-container');
-  const wrap = document.querySelector('.preview-scaler');
-  const avail = wrap.clientWidth - 4;
-  // 카드 실제 크기 900×600 기준으로 스케일
-  const scale = Math.min(1, avail / 900);
-  card.style.transform = `scale(${scale})`;
-  container.style.width  = Math.round(900 * scale) + 'px';
-  container.style.height = Math.round(600 * scale) + 'px';
+function initCheckGroups() {
+  const groups = ['tweetGroup','playGroup','cpGroup','platformGroup','tagGroup','relGroup'];
+  groups.forEach(groupId => {
+    const el = document.getElementById(groupId);
+    if (!el) return;
+    el.addEventListener('change', e => {
+      if (e.target.type !== 'checkbox') return;
+      const label = e.target.closest('.check-item');
+      if (!label) return;
+      if (e.target.checked) label.classList.add('checked');
+      else label.classList.remove('checked');
+      updateDisplay(groupId);
+    });
+  });
 }
-window.addEventListener('resize', scalePreview);
-window.addEventListener('load', scalePreview);
-setTimeout(scalePreview, 100);
-
-// ────────────────────────────────────────
-// 폰트 적용
-// ────────────────────────────────────────
-function applyFont() {
-  const f = document.getElementById('fontSelect').value;
-  document.getElementById('card').style.fontFamily = f;
-}
-
-// ────────────────────────────────────────
-// 보딩 패스 업데이트
-// ────────────────────────────────────────
-function updateBP() {
-  const nn = document.getElementById('nicknameInput').value || '닉네임';
-  const ac = document.getElementById('accountInput').value  || '계정';
-  const qt = document.getElementById('quoteInput').value    || '인용구 입력란';
-  const mn = document.getElementById('mineInput').value     || '—';
-
-  const bpNN = document.getElementById('bpNickname');
-  bpNN.textContent = nn;
-  // 자동 폰트 축소
-  const len = nn.length;
-  if      (len <= 8)  bpNN.style.fontSize = '26px';
-  else if (len <= 12) bpNN.style.fontSize = '20px';
-  else if (len <= 16) bpNN.style.fontSize = '15px';
-  else                bpNN.style.fontSize = '12px';
-
-  document.getElementById('bpAccount').textContent = ac;
-
-  const bpQ = document.getElementById('bpQuote');
-  bpQ.textContent = qt;
-  const qLen = qt.length;
-  if      (qLen <= 40)  bpQ.style.fontSize = '14px';
-  else if (qLen <= 80)  bpQ.style.fontSize = '12px';
-  else if (qLen <= 120) bpQ.style.fontSize = '11px';
-  else                  bpQ.style.fontSize = '10px';
-
-  document.getElementById('bpMine').textContent = mn;
-}
-
-// ────────────────────────────────────────
-// 라디오 선택 (연령, FUB)
-// ────────────────────────────────────────
-function selectRadio(el, groupId) {
-  document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('checked'));
-  el.classList.add('checked');
-  const val = el.querySelector('input').value;
-  if (groupId === 'ageGroup') document.getElementById('bpAge').textContent = val;
-  if (groupId === 'fubGroup') document.getElementById('bpFub').textContent = val;
-  updateRelDisplay();
-}
-
-function updateRelDisplay() {
-  const checked = [...document.querySelectorAll('#relGroup .check-item.checked')].map(c=>c.querySelector('input').value);
-  document.getElementById('bpRel').textContent = checked.join(' ') || '—';
-}
-
-// ────────────────────────────────────────
-// 체크 토글
-// ────────────────────────────────────────
-function toggleCheck(el) {
-  el.classList.toggle('checked');
-  const groupId = el.closest('.check-group').id;
-  updateDisplay(groupId);
-}
+initCheckGroups();
 
 function updateDisplay(groupId) {
-  const vals = [...document.querySelectorAll(`#${groupId} .check-item.checked`)].map(c=>c.querySelector('input').value);
-
   if (groupId === 'relGroup') {
-    document.getElementById('bpRel').textContent = vals.join(' ') || '—';
+    const vals = [...document.querySelectorAll('#relGroup .check-item.checked')]
+      .map(c => c.querySelector('input').value);
+    document.getElementById('bpRel').textContent = vals.join(' / ') || '—';
     return;
   }
-
   const map = {
     tweetGroup:    'tweetDisplay',
     playGroup:     'playDisplay',
@@ -1255,7 +1199,6 @@ function updateDisplay(groupId) {
   };
   const displayId = map[groupId];
   if (!displayId) return;
-
   const display = document.getElementById(displayId);
   const allItems = [...document.querySelectorAll(`#${groupId} .check-item`)];
   display.innerHTML = '';
@@ -1267,6 +1210,7 @@ function updateDisplay(groupId) {
     display.appendChild(span);
     display.appendChild(document.createTextNode(' '));
   });
+  updateHlStyle();
 }
 
 function initDisplays() {
@@ -1284,8 +1228,12 @@ function addCustomTag(groupId, inputId) {
   const group = document.getElementById(groupId);
   const lbl = document.createElement('label');
   lbl.className = 'check-item checked';
-  lbl.onclick = function(){ toggleCheck(this); };
-  lbl.innerHTML = `<input type="checkbox" value="${val}" checked>${val}`;
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.value = val;
+  cb.checked = true;
+  lbl.appendChild(cb);
+  lbl.appendChild(document.createTextNode(val));
   group.appendChild(lbl);
   inp.value = '';
   updateDisplay(groupId);
@@ -1302,157 +1250,204 @@ function setColor(id, val) {
 }
 
 function applyColors() {
-  const border  = document.getElementById('borderColor').value;
-  const midBg   = document.getElementById('midBg').value;
-  const botBg   = document.getElementById('bottomBg').value;
-
-  document.querySelectorAll('.bottom-box').forEach(b => b.style.background = botBg);
-  document.querySelectorAll('.bottom-box').forEach(b => b.style.borderColor = border);
+  const border = document.getElementById('borderColor').value;
+  const midBg  = document.getElementById('midBg').value;
+  const botBg  = document.getElementById('bottomBg').value;
+  document.querySelectorAll('.bottom-box').forEach(b => {
+    b.style.background   = botBg;
+    b.style.borderColor  = border;
+  });
   document.getElementById('boarding-box').style.background = midBg;
   document.getElementById('boarding-pass').style.borderColor = border;
-  document.querySelector('#mid-section').style.borderColor = border;
+  document.getElementById('mid-section').style.borderColor = border;
   document.querySelectorAll('.side-img-box').forEach(b => b.style.borderColor = border);
-  document.querySelector('.bp-stripe').style.background = `repeating-linear-gradient(-45deg,${border} 0px,${border} 10px,#fff 10px,#fff 20px)`;
 }
 
 function applyChipColors() {
   const c1 = document.getElementById('chip1Color').value;
   const c2 = document.getElementById('chip2Color').value;
   const c3 = document.getElementById('chip3Color').value;
-  ['chip1','chip1b','chip1c'].forEach(id => { const el = document.getElementById(id); if(el) el.style.background = c1; });
+  ['chip1','chip1b','chip1c'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.style.background = c1;
+  });
   const el2 = document.getElementById('chip2'); if(el2) el2.style.background = c2;
   const el3 = document.getElementById('chip3'); if(el3) el3.style.background = c3;
 }
 
-function applyHighlightColor() {
-  const hc = document.getElementById('highlightColor').value;
-  document.querySelectorAll('.tag-display .active').forEach(s => {
-    s.style.backgroundImage = `linear-gradient(transparent 50%, ${hc} 50%)`;
-  });
-  // 새로 렌더될 때도 적용되도록 CSS 변수로 처리
-  document.documentElement.style.setProperty('--hl-color', hc);
-}
+function applyHighlightColor() { updateHlStyle(); }
 
-// CSS에 --hl-color 반영
 const hlStyle = document.createElement('style');
 hlStyle.id = 'hl-style';
 document.head.appendChild(hlStyle);
 function updateHlStyle() {
   const hc = document.getElementById('highlightColor').value;
-  document.getElementById('hl-style').textContent =
+  hlStyle.textContent =
     `.tag-display span.active { background-image: linear-gradient(transparent 50%, ${hc} 50%) !important; }`;
 }
 document.getElementById('highlightColor').addEventListener('input', updateHlStyle);
 updateHlStyle();
 
 // ────────────────────────────────────────
-// 보딩패스 배너 이미지
+// 폰트 적용
 // ────────────────────────────────────────
-const bannerPos = { x: 0, y: 0 };
-
-function uploadBanner(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = document.getElementById('bp-banner-img');
-  img.src = url;
-  img.style.display = 'block';
-  document.getElementById('bpBannerPlaceholder').style.display = 'none';
-  bannerPos.x = 0; bannerPos.y = 0;
-  updateBannerTransform();
+function applyFont() {
+  const f = document.getElementById('fontSelect').value;
+  document.getElementById('card').style.fontFamily = f;
 }
 
-function updateBannerTransform() {
-  const scale = document.getElementById('bannerScale').value;
-  document.getElementById('bannerScaleVal').textContent = scale + '%';
-  const img = document.getElementById('bp-banner-img');
-  img.style.transform = `translate(${bannerPos.x}px, ${bannerPos.y}px) scale(${scale/100})`;
+// ────────────────────────────────────────
+// 인용구 폰트 사이즈
+// ────────────────────────────────────────
+function updateQuoteSize() {
+  const sz = document.getElementById('quoteSize').value;
+  document.getElementById('quoteSizeVal').textContent = sz + 'px';
+  document.getElementById('bpQuote').style.fontSize = sz + 'px';
 }
 
-setupDrag('bpBannerZone', 'bp-banner-img', bannerPos, updateBannerTransform);
+// ────────────────────────────────────────
+// 보딩 패스 텍스트 업데이트
+// ────────────────────────────────────────
+function updateBP() {
+  const nn = document.getElementById('nicknameInput').value || '닉네임';
+  const ac = document.getElementById('accountInput').value  || '계정';
+  const qt = document.getElementById('quoteInput').value    || '인용구 입력란';
+  const mn = document.getElementById('mineInput').value     || '—';
+
+  const bpNN = document.getElementById('bpNickname');
+  bpNN.textContent = nn;
+  const len = nn.length;
+  if      (len <= 6)  bpNN.style.fontSize = '13px';
+  else if (len <= 10) bpNN.style.fontSize = '10px';
+  else                bpNN.style.fontSize = '8px';
+
+  document.getElementById('bpAccount').textContent = ac;
+  document.getElementById('bpQuote').textContent = qt;
+  document.getElementById('bpMine').textContent = mn;
+}
 
 // ────────────────────────────────────────
-// 헤더 이미지 업로드 + 드래그
+// 라디오 선택
 // ────────────────────────────────────────
+function selectRadio(el, groupId) {
+  document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('checked'));
+  el.classList.add('checked');
+  const val = el.querySelector('input').value;
+  if (groupId === 'ageGroup') document.getElementById('bpAge').textContent = val;
+  if (groupId === 'fubGroup') document.getElementById('bpFub').textContent = val;
+}
+
+// ────────────────────────────────────────
+// 미리보기 스케일
+// ────────────────────────────────────────
+function scalePreview() {
+  const card = document.getElementById('card');
+  const container = document.getElementById('preview-container');
+  const wrap = document.querySelector('.preview-scaler');
+  const avail = wrap.clientWidth - 4;
+  const scale = Math.min(1, avail / 900);
+  card.style.transform = `scale(${scale})`;
+  card.style.transformOrigin = 'top left';
+  container.style.width  = Math.round(900 * scale) + 'px';
+  container.style.height = Math.round(600 * scale) + 'px';
+}
+window.addEventListener('resize', scalePreview);
+window.addEventListener('load', scalePreview);
+setTimeout(scalePreview, 100);
+
+// ────────────────────────────────────────
+// 이미지 드래그 — 카드 내부 좌표 기준으로 정확하게
+// ────────────────────────────────────────
+function getCardScale() {
+  const t = document.getElementById('card').style.transform || 'scale(1)';
+  const m = t.match(/scale\(([^)]+)\)/);
+  return m ? parseFloat(m[1]) : 1;
+}
+
+function setupDrag(zoneId, imgId, posObj, updateFn) {
+  const zone = document.getElementById(zoneId);
+  let dragging = false, startX, startY, origX, origY;
+
+  function onStart(cx, cy) {
+    const img = document.getElementById(imgId);
+    if (img.style.display === 'none') return;
+    dragging = true;
+    startX = cx; startY = cy;
+    origX = posObj.x; origY = posObj.y;
+    zone.style.cursor = 'grabbing';
+  }
+  function onMove(cx, cy) {
+    if (!dragging) return;
+    const s = getCardScale();
+    posObj.x = origX + (cx - startX) / s;
+    posObj.y = origY + (cy - startY) / s;
+    updateFn();
+  }
+  function onEnd() {
+    dragging = false;
+    zone.style.cursor = 'crosshair';
+  }
+
+  zone.addEventListener('mousedown',  e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup',   () => onEnd());
+
+  zone.addEventListener('touchstart',  e => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  window.addEventListener('touchmove', e => { if(dragging){ e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+  window.addEventListener('touchend',  () => onEnd());
+}
+
+// ────────────────────────────────────────
+// 헤더 이미지
+// ────────────────────────────────────────
+const state = { headerPos:{x:0,y:0}, leftPos:{x:0,y:0}, rightPos:{x:0,y:0} };
+
 function uploadHeader(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
   const img = document.getElementById('header-img-el');
+  img.onload = () => {
+    img.style.width  = img.naturalWidth  + 'px';
+    img.style.height = img.naturalHeight + 'px';
+    img.style.maxWidth = 'none';
+    img.style.maxHeight = 'none';
+    img.style.objectFit = 'unset';
+  };
   img.src = url;
   img.style.display = 'block';
   document.getElementById('header-no-img').style.display = 'none';
-  state.headerPos = { x: 0, y: 0 };
+  state.headerPos = {x:0, y:0};
   updateHeaderTransform();
 }
 
 function updateHeaderTransform() {
   const scale = document.getElementById('headerScale').value;
   document.getElementById('headerScaleVal').textContent = scale + '%';
-  state.headerScale = parseInt(scale);
   const img = document.getElementById('header-img-el');
-  img.style.transform = `translate(${state.headerPos.x}px, ${state.headerPos.y}px) scale(${state.headerScale/100})`;
+  img.style.transform = `translate(${state.headerPos.x}px, ${state.headerPos.y}px) scale(${scale/100})`;
+  img.style.transformOrigin = 'top left';
 }
 
 setupDrag('header-zone', 'header-img-el', state.headerPos, updateHeaderTransform);
 setupDrag('leftImgBox',  'left-img-el',   state.leftPos,   () => updateSideTransform('left'));
 setupDrag('rightImgBox', 'right-img-el',  state.rightPos,  () => updateSideTransform('right'));
 
-function setupDrag(zoneId, imgId, posObj, updateFn) {
-  const zone = document.getElementById(zoneId);
-  let dragging = false, startX, startY, origX, origY;
-
-  zone.addEventListener('mousedown', e => {
-    const img = document.getElementById(imgId);
-    if (img.style.display === 'none') return;
-    dragging = true;
-    startX = e.clientX; startY = e.clientY;
-    origX = posObj.x;   origY = posObj.y;
-    zone.style.cursor = 'grabbing';
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    const card = document.getElementById('card');
-    const scale = parseFloat(card.style.transform.replace('scale(','')) || 1;
-    posObj.x = origX + (e.clientX - startX) / scale;
-    posObj.y = origY + (e.clientY - startY) / scale;
-    updateFn();
-  });
-  window.addEventListener('mouseup', () => {
-    dragging = false;
-    zone.style.cursor = 'crosshair';
-  });
-
-  // 터치
-  zone.addEventListener('touchstart', e => {
-    const img = document.getElementById(imgId);
-    if (img.style.display === 'none') return;
-    dragging = true;
-    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-    origX = posObj.x;   origY = posObj.y;
-    e.preventDefault();
-  }, { passive: false });
-  window.addEventListener('touchmove', e => {
-    if (!dragging) return;
-    const card = document.getElementById('card');
-    const scale = parseFloat(card.style.transform.replace('scale(','')) || 1;
-    posObj.x = origX + (e.touches[0].clientX - startX) / scale;
-    posObj.y = origY + (e.touches[0].clientY - startY) / scale;
-    updateFn();
-  }, { passive: false });
-  window.addEventListener('touchend', () => { dragging = false; });
-}
-
 // ────────────────────────────────────────
-// 사이드 이미지 업로드 + 드래그
+// 사이드 이미지
 // ────────────────────────────────────────
 function uploadSide(e, side) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
   const imgEl = document.getElementById(side === 'left' ? 'left-img-el' : 'right-img-el');
   const placeholder = document.getElementById(side === 'left' ? 'leftPlaceholder' : 'rightPlaceholder');
+  imgEl.onload = () => {
+    imgEl.style.width  = imgEl.naturalWidth  + 'px';
+    imgEl.style.height = imgEl.naturalHeight + 'px';
+    imgEl.style.maxWidth = 'none';
+    imgEl.style.maxHeight = 'none';
+    imgEl.style.objectFit = 'unset';
+    imgEl.style.top  = '0';
+    imgEl.style.left = '0';
+  };
   imgEl.src = url;
   imgEl.style.display = 'block';
   placeholder.style.display = 'none';
@@ -1465,17 +1460,50 @@ function updateSideTransform(side) {
   const valId   = side === 'left' ? 'leftScaleVal' : 'rightScaleVal';
   const imgId   = side === 'left' ? 'left-img-el' : 'right-img-el';
   const pos     = side === 'left' ? state.leftPos : state.rightPos;
-  const scale   = document.getElementById(scaleId).value;
-  document.getElementById(valId).textContent = scale + '%';
+  const sc      = document.getElementById(scaleId).value;
+  document.getElementById(valId).textContent = sc + '%';
   const img = document.getElementById(imgId);
-  img.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${scale/100})`;
-  img.style.transformOrigin = 'center center';
-  img.style.top = '0'; img.style.left = '0';
-  img.style.width = '100%'; img.style.height = '100%';
+  img.style.transform       = `translate(${pos.x}px, ${pos.y}px) scale(${sc/100})`;
+  img.style.transformOrigin = 'top left';
 }
 
 // ────────────────────────────────────────
-// 이미지 저장 (900×600 → scale:2 → 1800×1200)
+// 보딩패스 배너 이미지
+// ────────────────────────────────────────
+const bannerPos = {x:0, y:0};
+
+function uploadBanner(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById('bp-banner-img');
+  img.onload = () => {
+    img.style.width  = img.naturalWidth  + 'px';
+    img.style.height = img.naturalHeight + 'px';
+    img.style.maxWidth = 'none';
+    img.style.maxHeight = 'none';
+    img.style.objectFit = 'unset';
+    img.style.top  = '0';
+    img.style.left = '0';
+  };
+  img.src = url;
+  img.style.display = 'block';
+  document.getElementById('bpBannerPlaceholder').style.display = 'none';
+  bannerPos.x = 0; bannerPos.y = 0;
+  updateBannerTransform();
+}
+
+function updateBannerTransform() {
+  const scale = document.getElementById('bannerScale').value;
+  document.getElementById('bannerScaleVal').textContent = scale + '%';
+  const img = document.getElementById('bp-banner-img');
+  img.style.transform       = `translate(${bannerPos.x}px, ${bannerPos.y}px) scale(${scale/100})`;
+  img.style.transformOrigin = 'top left';
+}
+
+setupDrag('bpBannerZone', 'bp-banner-img', bannerPos, updateBannerTransform);
+
+// ────────────────────────────────────────
+// 저장 (900×600 → scale:2 → 1800×1200)
 // ────────────────────────────────────────
 async function saveCard() {
   const btn = document.querySelector('.save-btn');
@@ -1484,15 +1512,13 @@ async function saveCard() {
 
   const card = document.getElementById('card');
   const container = document.getElementById('preview-container');
-
-  // 저장 전: transform 제거, 컨테이너 실제 크기로 임시 설정
   const origTransform = card.style.transform;
   card.style.transform = 'none';
   container.style.overflow = 'visible';
 
   try {
     const canvas = await html2canvas(card, {
-      scale: 2,          // 900×600 × 2 = 1800×1200
+      scale: 2,
       width: 900,
       height: 600,
       useCORS: true,
@@ -1503,11 +1529,10 @@ async function saveCard() {
     link.download = '닉네임카드.png';
     link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
-  } catch(e) {
-    alert('저장 중 오류가 발생했습니다: ' + e.message);
+  } catch(err) {
+    alert('저장 중 오류: ' + err.message);
   }
 
-  // 복구
   card.style.transform = origTransform;
   container.style.overflow = 'hidden';
   btn.textContent = '💾 이미지로 저장 (1800×1200)';
